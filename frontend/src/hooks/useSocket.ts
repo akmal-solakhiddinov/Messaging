@@ -1,8 +1,8 @@
-import { io } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/authContext';
 
-let socket;
+let socket: Socket;
 
 const useSocket = () => {
     const { user } = useAuth();

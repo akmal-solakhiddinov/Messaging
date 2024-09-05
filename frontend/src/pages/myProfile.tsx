@@ -3,13 +3,16 @@ import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/context/authContext"
 import useGetAllRequests from "@/hooks/useGetAllRequests";
 import useUpdateRequestStatus from "@/hooks/useUpdateRequestStatus";
+import { RequestType } from "@/lib/type";
 import { User } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom";
+
+
 
 const MyProfile = () => {
     const { user } = useAuth();
     const { friendRequests, isFetchingRequests } = useGetAllRequests()
-    const { updateRequestStatus, isUpdatingStatus } = useUpdateRequestStatus()
+    const { updateRequestStatus } = useUpdateRequestStatus()
     const navigate = useNavigate();
     const { toast } = useToast()
 
@@ -46,7 +49,7 @@ const MyProfile = () => {
             </div>
             <div>
                 <ul>
-                    {!isFetchingRequests && friendRequests.map(request => (
+                    {!isFetchingRequests && friendRequests.map((request: RequestType) => (
                         <li key={request.id} className="flex items-center p-2 rounded-lg  bg-slate-600 cursor-pointer">
                             <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-800 font-bold mr-4">
                                 {request.sender?.fullName ? request?.sender?.fullName[0] : 'A'}

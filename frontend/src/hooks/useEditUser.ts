@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query"
 const useEditUser = () => {
     const { mutate: editUser, isPending: isEditing } = useMutation({
         mutationKey: ["user"],
-        mutationFn: async (data) => {
+        mutationFn: async (data: FormData) => {
             const res = await $axios.put('user/update', data, {
                 headers: {
                     'Content-Type': 'multipart/form-data',

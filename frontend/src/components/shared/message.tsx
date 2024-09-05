@@ -24,6 +24,9 @@ interface MessageProps {
 const Message: React.FC<MessageProps> = ({ message, type, reference }) => {
     const { user } = useAuth()
     const renderFileContent = () => {
+        if (!message.file) {
+            return null; // Or a default fallback if needed
+        }
         switch (message.fileType) {
             case "IMAGE":
                 return <img src={message.file} alt="Image" />;

@@ -9,7 +9,7 @@ import { useEffect } from "react";
 
 interface RoomNavbarProps {
     friend: UserType | null;
-    roomId: string
+    roomId: string | undefined
 }
 
 
@@ -23,8 +23,8 @@ const RoomNavbar: React.FC<RoomNavbarProps> = ({ friend, roomId }) => {
 
 
     useEffect(() => {
-        document.title = friend?.fullName
-    }, [friend?.fullName])
+        document.title = friend?.fullName || 'unkown user';
+    }, [friend?.fullName]);
 
     const { deleteItem, isDeleting } = useDelete()
     return (

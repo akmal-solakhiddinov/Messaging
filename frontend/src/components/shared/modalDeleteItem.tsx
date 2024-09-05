@@ -1,4 +1,3 @@
-import $axios from "@/http/axios";
 import { Button } from "../ui/button";
 import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from "../ui/dialog";
 import useDelete from "@/hooks/useDelete";
@@ -9,7 +8,7 @@ interface ModalDeleteItemProps {
 }
 
 const ModalDeleteItem: React.FC<ModalDeleteItemProps> = ({ itemLink, text }) => {
-    const { deleteItem, isDeleting } = useDelete()
+    const { deleteItem } = useDelete()
 
 
     // const handleDelete = async () => {

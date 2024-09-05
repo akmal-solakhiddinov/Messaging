@@ -5,8 +5,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import $axios from "@/http/axios";
 import { determineFileType } from "@/lib/helper";
-import useSocket from "@/hooks/useSocket";
-import { useAuth } from "@/context/authContext";
+// import useSocket from "@/hooks/useSocket";
+// import { useAuth } from "@/context/authContext";
 
 // Zod validation schema
 const messageSchema = z.object({
@@ -18,7 +18,7 @@ const messageSchema = z.object({
 });
 
 type FormMessageProps = {
-    receiverId: string;
+    receiverId: string | undefined;
     roomId: string | undefined;
 };
 
@@ -28,8 +28,8 @@ const FormMessage: React.FC<FormMessageProps> = ({ receiverId, roomId }) => {
     const { handleSubmit, reset, register, formState: { isSubmitting, errors } } = useForm<MessageSchema>({
         resolver: zodResolver(messageSchema),
     });
-    const { isConnected, socket } = useSocket();
-    const { user } = useAuth();
+    // const { isConnected, socket } = useSocket();
+    // const { user } = useAuth();
 
     const onSubmit = async (data: MessageSchema) => {
         try {
@@ -47,7 +47,7 @@ const FormMessage: React.FC<FormMessageProps> = ({ receiverId, roomId }) => {
                 formData.append('fileType', determineFileType(file.name));
             }
 
-            const res = await $axios.post(`/messages/send/${roomId}/${receiverId}`, formData, {
+            await $axios.post(`/messages/send/${roomId}/${receiverId}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 }

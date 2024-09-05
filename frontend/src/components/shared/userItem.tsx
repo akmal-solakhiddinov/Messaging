@@ -15,10 +15,16 @@
 
 */
 
+import { UserType } from "@/lib/type"
+import React from "react"
 
 
 
-const UserItem = ({ user }) => {
+interface Props {
+    user: UserType
+}
+
+const UserItem: React.FC<Props> = ({ user }) => {
     return (
         <li className="flex items-center p-2 rounded-lg hover:bg-slate-600 cursor-pointer">
             <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-800 font-bold mr-4 overflow-hidden">
@@ -34,7 +40,7 @@ const UserItem = ({ user }) => {
                 <div className="text-slate-400 text-sm">{user.status}</div>
             </div>
             <div
-                className={`w-3 h-3 rounded-full ${user.status === 'Online' ? 'bg-green-500' : user.status === 'Busy' ? 'bg-yellow-500' : 'bg-gray-500'}`}
+                className={`w-3 h-3 rounded-full ${user.status === 'online' ? 'bg-green-500' : user.status === 'offline' ? 'bg-yellow-500' : 'bg-gray-500'}`}
                 title={user.status}
                 aria-label={`Status: ${user.status}`}
             />

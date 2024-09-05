@@ -10,7 +10,7 @@ import { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 
 const Room = () => {
-    const messagesEndRef = useRef(null);
+    const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const { id } = useParams<string>();
     const { user } = useAuth();
     const { user: friend, messages, isLoading } = useFetchRoomMessages(id);

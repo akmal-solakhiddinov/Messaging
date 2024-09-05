@@ -1,5 +1,5 @@
 import { Button, buttonVariants } from "@/components/ui/button";
-import { useSystem } from "@/context/systemContext";
+// import { useSystem } from "@/context/systemContext";
 import useCreateRequest from "@/hooks/useCreateRequest";
 import useCreateRoom from "@/hooks/useCreateRoom";
 import useFetchOneUser from "@/hooks/useFetchOneUser";
@@ -9,8 +9,8 @@ import { Link, useParams } from "react-router-dom"
 const Profile = () => {
     const { id } = useParams<string>();
     const { profile, isFetchingUser } = useFetchOneUser(id);
-    const { createFriendRequest, isCreatingRequest } = useCreateRequest()
-    const { createRoom, isCreatingRoom } = useCreateRoom()
+    const { createFriendRequest, } = useCreateRequest()
+    const { createRoom, } = useCreateRoom()
 
 
     return isFetchingUser ? (<div>Loading...</div>)

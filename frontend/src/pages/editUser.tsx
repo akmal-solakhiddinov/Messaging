@@ -3,7 +3,7 @@ import { useAuth } from "@/context/authContext";
 import useEditUser from "@/hooks/useEditUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 // Validation schema
@@ -19,7 +19,7 @@ type Schema = z.infer<typeof userSchema>;
 
 const EditUser = () => {
     const { user } = useAuth();
-    const { editUser, isEditing } = useEditUser()
+    const { editUser, } = useEditUser()
 
     const { handleSubmit, register, formState: { isSubmitting } } = useForm<Schema>({
         resolver: zodResolver(userSchema),
@@ -61,7 +61,7 @@ const EditUser = () => {
     };
 
 
-  
+
     return (
         <div className="p-6">
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3 max-w-md">

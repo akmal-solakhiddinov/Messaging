@@ -1,19 +1,25 @@
 import { useEffect, useCallback } from 'react';
 import useSocket from '@/hooks/useSocket';
 import { useQueryClient } from '@tanstack/react-query';
+import { MessageType, UserType } from '@/lib/type';
 
-const useRealTimeMessages = (roomId: string) => {
+interface ChatData {
+    id: string;
+    user: UserType;
+    messages: MessageType[];
+}
+
+const useRealTimeMessages = (roomId: string | undefined) => {
     const queryClient = useQueryClient();
     const { socket, isConnected } = useSocket();
 
     const handleNewMessage = useCallback(
-        (newMessage) => {
-            console.log('New message received:', newMessage);
-
-            queryClient.setQueryData(['messages', roomId], (oldData) => ({
+        (newMessage: MessageType) => {
+            queryClient.setQueryData(['messages', roomId], (oldData: ChatData) => ({
                 ...oldData,
-                messages: [...(oldData?.messages || []), newMessage],
+                messages: [...(oldData?.messages || []), newMessage]
             }));
+
         },
         [queryClient, roomId]
     );

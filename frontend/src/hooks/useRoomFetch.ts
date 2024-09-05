@@ -1,10 +1,16 @@
 import $axios from "@/http/axios"
+import { UserType } from "@/lib/type";
 import { useEffect, useState } from "react"
 
+interface RoomProps {
+    id: string;
+    user: UserType
+}
+
 const useRoomFetch = () => {
-    const [rooms, setRooms] = useState([])
-    const [error, setError] = useState('')
-    const [loading, setLoading] = useState(false)
+    const [rooms, setRooms] = useState<RoomProps[]>([])
+    const [error, setError] = useState<string>('')
+    const [loading, setLoading] = useState<boolean>(false)
 
     useEffect(() => {
         const fetchRooms = async () => {

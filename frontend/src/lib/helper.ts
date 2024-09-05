@@ -5,7 +5,8 @@ const displayableAudioTypes = ['mp3', 'wav', 'aac', 'ogg', 'flac'];
 
 
 export const determineFileType = (fileName: string) => {
-    const extension = fileName?.split('.').pop().toLowerCase();
+
+    const extension = fileName.split('.').pop()?.toLowerCase() || '';
 
     if (displayableImageTypes.includes(extension)) {
         return 'IMAGE';

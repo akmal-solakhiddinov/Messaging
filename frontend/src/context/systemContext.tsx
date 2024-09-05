@@ -1,7 +1,8 @@
-import { toast, useToast } from '@/components/ui/use-toast';
-import useSocket from '@/hooks/useSocket';
-import React, { createContext, useContext, ReactNode, useEffect } from 'react';
-import { useLocation, useParams, useSearchParams } from 'react-router-dom';
+// import { useToast } from '@/components/ui/use-toast';
+// import useSocket from '@/hooks/useSocket';
+import React, { createContext, useContext, ReactNode, } from 'react';
+// import { string } from 'zod';
+// import { useLocation, } from 'react-router-dom';
 
 interface SystemContextType {
     loading: boolean;
@@ -11,25 +12,29 @@ interface SystemContextType {
 const SystemContext = createContext<SystemContextType | undefined>(undefined);
 
 const SystemProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const parmas = useLocation();
-    const { isConnected, socket } = useSocket()
-    const { toast } = useToast()
-    useEffect(() => {
-        if (isConnected) {
-            socket.on('notification', notification => {
-                console.log(notification)
-                toast({
+    const loading = true
+    const error = 'sal'
+    // const parmas = useLocation();
+    // const { isConnected, socket } = useSocket()
+    // const { toast } = useToast()
+    // useEffect(() => {
+    //     if (isConnected) {
+    //         socket.on('notification', notification => {
+    //             console.log(notification)
+    //             toast({
 
-                    title: notification.title,
-                    description: notification.description
-                })
-            })
-        }
+    //                 title: notification.title,
+    //                 description: notification.description
+    //             })
+    //         })
+    //     }
 
-    }, [])
+    // }, [])
+
+    const value = { loading, error }
 
     return (
-        <SystemContext.Provider value={{}}>
+        <SystemContext.Provider value={value}>
             {children}
         </SystemContext.Provider>
     );

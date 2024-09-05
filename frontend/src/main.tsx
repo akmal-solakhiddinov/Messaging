@@ -4,7 +4,7 @@ import App from './App.tsx'
 import './index.css'
 import AuthProvider from './context/authContext.tsx'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import SystemProvider from './context/systemContext.tsx'
+// import SystemProvider from './context/systemContext.tsx'
 
 const queryClient = new QueryClient()
 createRoot(document.getElementById('root')!).render(

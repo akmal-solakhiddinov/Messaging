@@ -6,6 +6,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { File } from "lucide-react";
 import useEditMessage from "@/hooks/useEditMessage";
+import { determineFileType } from "@/lib/helper";
 
 interface ModalFormEditMessageProps {
     message: MessageType;
@@ -37,7 +38,19 @@ const ModalFormEditMessage: React.FC<ModalFormEditMessageProps> = ({ message }) 
                 data.file = undefined; // Handle cases where no file is selected
             }
 
-            editMessage({ data, messageId: message.id });
+            const formData = new FormData();
+
+            if (data.content) {
+                formData.append('content', data.content);
+            }
+
+            if (data.file && data.file instanceof FileList && data.file.length > 0) {
+                const file = data.file[0];
+                formData.append('file', file);
+                formData.append('fileType', determineFileType(file.name));
+            }
+
+            editMessage({ data: formData, messageId: message.id });
         } catch (error) {
             console.log(error);
         }

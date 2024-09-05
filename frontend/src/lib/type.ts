@@ -6,11 +6,16 @@
 
 export type MessageType = {
     id: string;
-    content?: string;
-    file?: string;
-    fileType?: string,
-    created: string,
-    updated: string,
+    content: string;
+    file: string | null;
+    fileType: string | null;
+    senderId: string;
+    receiverId: string;
+    chatId: string;
+    status: 'unseen' | 'seen';
+    created: string;
+    updated: string;
+    deleted: boolean;
     sender: {
         id: string;
         username: string;
@@ -51,4 +56,53 @@ export type UserType = {
     account: 'public' | 'private';
     status: 'offline' | 'online';
     lastLogin: string;
+}
+
+
+
+
+// Define the type for a User
+// interface User {
+//     id: string;
+//     username: string | null;
+//     fullName: string;
+//     status: string;
+//     image: string;
+//     lastLogin: string | null;
+//   }
+
+// Define the type for a Message Sender
+//   interface Sender {
+//     id: string;
+//     username: string | null;
+//     fullName: string;
+//   }
+
+//   // Define the type for a Message
+//   interface Message {
+// id: string;
+// content: string;
+// file: string | null;
+// fileType: string | null;
+// senderId: string;
+// receiverId: string;
+// chatId: string;
+// status: string;
+// created: string;
+// updated: string;
+// deleted: boolean;
+// sender: Sender;
+//   }
+
+// Define the type for the Main Data
+
+
+export type RequestType = {
+    id: string;
+    senderId: string;
+    friendId: string;
+    status: 'approved' | 'rejected' | 'pending';
+    created: string;
+    updated: string;
+    sender: UserType
 }

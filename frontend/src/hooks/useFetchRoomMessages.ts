@@ -1,7 +1,7 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import $axios from "@/http/axios";
-import useSocket from "@/hooks/useSocket";
-import { useEffect, useCallback } from "react";
+// import useSocket from "@/hooks/useSocket";
+// import { useEffect, useCallback } from "react";
 import { MessageType, UserType } from "@/lib/type";
 
 interface RoomMessagesData {
