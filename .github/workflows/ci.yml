@@ -12,13 +12,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Fetch all branches and history
+          fetch-depth: 0 # Fetch all branches and history
 
       # Backend Tests
       - name: Set up Node.js (Backend)
         uses: actions/setup-node@v3
         with:
-          node-version: '18'  # Use the version of Node.js you're working with
+          node-version: "18" # Use the version of Node.js you're working with
 
       - name: Install backend dependencies
         run: |
@@ -33,11 +33,13 @@ jobs:
   push-to-main:
     runs-on: ubuntu-latest
     needs: build-and-test
+    permissions:
+      contents: write # Explicitly grant permissions to push changes
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Fetch all branches and history
+          fetch-depth: 0 # Fetch all branches and history
 
       - name: Configure Git
         run: |
