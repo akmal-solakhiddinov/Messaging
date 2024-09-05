@@ -44,22 +44,22 @@ jobs:
         #  cd frontend
          # npm lint # Make sure this command runs your frontend tests
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build-and-test
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+  #deploy:
+   # runs-on: ubuntu-latest
+    #needs: build-and-test
+    #steps:
+     # - name: Checkout code
+      #  uses: actions/checkout@v3
 
-      - name: Deploy or Build (optional)
-        run: |
+      #- name: Deploy or Build (optional)
+       # run: |
           # Add deployment or build steps if needed
           #echo "Deployment or Build Step"
-          npm build
+        #  npm build
 
   push-to-main:
     runs-on: ubuntu-latest
-    needs: deploy
+    needs: build-and-test
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
