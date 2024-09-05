@@ -33,8 +33,6 @@ jobs:
   push-to-main:
     runs-on: ubuntu-latest
     needs: build-and-test
-    permissions:
-      contents: write # Explicitly grant permissions to push changes
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
