@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String      @id @default(uuid())
+  email            String      @unique
+  username         String?     @unique
+  fullName         String?
+  status           UserStatus  @default(offline)
+  lastLogin        DateTime?
+  password         String
+  image            String?     @db.Text()
+  created          DateTime    @default(now())
+  updated          DateTime    @updatedAt
+  deleted          Boolean     @default(false)
+  account          AccountType @default(public)
+  messagesSent     Message[]   @relation("MessagesSent")
+  messagesReceived Message[]   @relation("MessagesReceived")
+
+  chatRooms1         ChatRoom[] @relation("ChatRooms1")
+  chatRooms2         ChatRoom[] @relation("ChatRooms2")
+  RequestSender      Request[]  @relation("sender")
+  RequestFriend      Request[]  @relation("friend")
+  userByFriends      Friends[]  @relation("userBy")
+  relatedUserFriends Friends[]  @relation("relatedUser")
+
+  @@index([email], name: "idx_email")
+  @@index([username], name: "idx_username")
+}
+
+model Message {
+  id         String        @id @default(uuid())
+  content    String?       @db.Text()
+  file       String?       @db.Text()
+  fileType   FileType?
+  senderId   String
+  receiverId String
+  chatId     String
+  status     MessageStatus @default(unseen)
+  created    DateTime      @default(now())
+  updated    DateTime      @updatedAt
+  deleted    Boolean       @default(false)
+
+  sender   User     @relation("MessagesSent", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User     @relation("MessagesReceived", fields: [receiverId], references: [id], onDelete: Cascade)
+  chatRoom ChatRoom @relation("ChatMessages", fields: [chatId], references: [id], onDelete: Cascade)
+
+  @@index([senderId], name: "idx_senderId")
+  @@index([receiverId], name: "idx_receiverId")
+  @@index([chatId], name: "idx_chatId")
+}
+
+model ChatRoom {
+  id        String @id @default(uuid())
+  userOneId String
+  userTwoId String
+
+  userOne User @relation("ChatRooms1", fields: [userOneId], references: [id], onDelete: Cascade)
+  userTwo User @relation("ChatRooms2", fields: [userTwoId], references: [id], onDelete: Cascade)
+
+  messages Message[] @relation("ChatMessages")
+
+  @@index([userOneId], name: "idx_userOneId")
+  @@index([userTwoId], name: "idx_userTwoId")
+}
+
+model Request {
+  id       String      @id @default(uuid())
+  senderId String
+  friendId String
+  status   RequestType @default(pending)
+  created  DateTime    @default(now())
+  updated  DateTime    @updatedAt
+
+  sender User @relation("sender", fields: [senderId], references: [id], onDelete: Cascade)
+  friend User @relation("friend", fields: [friendId], references: [id], onDelete: Cascade)
+
+  @@unique([senderId, friendId], name: "idx_sender_friend")
+}
+
+model Friends {
+  id               String        @id @default(uuid())
+  userId           String
+  relatedUserId    String
+  relationshipType FriendsType
+  status           FriendsStatus
+  created          DateTime      @default(now())
+  updated          DateTime      @updatedAt
+
+  userBy      User @relation("userBy", fields: [userId], references: [id])
+  relatedUser User @relation("relatedUser", fields: [relatedUserId], references: [id])
+
+  @@unique([userId, relatedUserId], name: "idx_user_relatedUser")
+}
+
+enum FileType {
+  IMAGE
+  VIDEO
+  FILE
+  AUDIO
+}
+
+enum UserStatus {
+  online
+  offline
+}
+
+enum RequestType {
+  pending
+  approved
+  rejected
+}
+
+enum AccountType {
+  private
+  public
+}
+
+enum FriendsType {
+  friend
+  blocked
+}
+
+enum FriendsStatus {
+  active
+  removed
+}
+
+enum MessageStatus {
+  seen
+  unseen
+}
