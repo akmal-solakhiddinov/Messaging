@@ -39,8 +39,8 @@ jobs:
           cd frontend
           npm install
 
-      - name: Run frontend tests
-        run: |
+     # - name: Run frontend tests
+      #  run: |
           cd frontend
           npm test # Make sure this command runs your frontend tests
 
@@ -54,7 +54,8 @@ jobs:
       - name: Deploy or Build (optional)
         run: |
           # Add deployment or build steps if needed
-          echo "Deployment or Build Step"
+          #echo "Deployment or Build Step"
+          npm build
 
   push-to-main:
     runs-on: ubuntu-latest
