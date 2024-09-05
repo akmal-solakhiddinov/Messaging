@@ -57,7 +57,7 @@ jobs:
           #echo "Deployment or Build Step"
           npm build
 
-  push-to-main:
+  #push-to-main:
     runs-on: ubuntu-latest
     needs: deploy
     steps:
