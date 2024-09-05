@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js (Backend)
         uses: actions/setup-node@v3
         with:
-          node-version: '18'  # Use the version of Node.js you're working with
+          node-version: "18" # Use the version of Node.js you're working with
 
       - name: Install backend dependencies
         run: |
@@ -32,17 +32,17 @@ jobs:
       - name: Set up Node.js (Frontend)
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Install frontend dependencies
         run: |
           cd frontend
           npm install
 
-     # - name: Run frontend tests
+      # - name: Run frontend tests
       #  run: |
-          cd frontend
-          npm test # Make sure this command runs your frontend tests
+      #cd frontend
+      #npm test # Make sure this command runs your frontend tests
 
   deploy:
     runs-on: ubuntu-latest
@@ -64,7 +64,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: development  # Checkout the latest code from development branch
+          ref: development # Checkout the latest code from development branch
 
       - name: Configure Git
         run: |
