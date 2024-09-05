@@ -11,12 +11,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all branches and history
 
       # Backend Tests
       - name: Set up Node.js (Backend)
         uses: actions/setup-node@v3
         with:
-          node-version: "18" # Use the version of Node.js you're working with
+          node-version: '18'  # Use the version of Node.js you're working with
 
       - name: Install backend dependencies
         run: |
@@ -35,17 +37,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: development # Checkout the latest code from the development branch
+          fetch-depth: 0  # Fetch all branches and history
 
       - name: Configure Git
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
 
-      - name: Push to main
+      - name: Ensure main branch exists
+        run: |
+          # Check if main exists, if not, create it
+          if ! git show-ref --verify --quiet refs/heads/main; then
+            git checkout -b main
+            git push origin main
+          else
+            git checkout main
+          fi
+
+      - name: Merge development into main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git checkout main
           git merge development --no-ff
           git push origin main
