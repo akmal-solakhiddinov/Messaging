@@ -4,7 +4,12 @@ import { Label } from "@/components/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from 'zod';
-import $axios from '../http/axios'
+import $axios from '../http/axios';
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/authContext";
+import { useEffect } from "react";
+
+// Validation schemas
 const schemaSignUp = z.object({
     fullName: z.string().min(1, 'Full Name is required'),
     email: z.string().email('Invalid email format'),
@@ -16,69 +21,63 @@ const schemaLogin = z.object({
     password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
-
 type SignUpSchema = z.infer<typeof schemaSignUp>;
 type LoginSchema = z.infer<typeof schemaLogin>;
 
+// Token storage helper
 const saveToken = (token: string) => {
     localStorage.setItem('token', token);
 };
 
 const Registration = () => {
-    const loginForm = useForm<LoginSchema>({
-        resolver: zodResolver(schemaLogin),
-    });
+    const navigate = useNavigate();
+    const { isAuth } = useAuth();
+    const loginForm = useForm<LoginSchema>({ resolver: zodResolver(schemaLogin) });
+    const signupForm = useForm<SignUpSchema>({ resolver: zodResolver(schemaSignUp) });
 
-    const signupForm = useForm<SignUpSchema>({
-        resolver: zodResolver(schemaSignUp)
-    });
-
+    // Handle login submission
     const handleLogin = async (data: LoginSchema) => {
-
         try {
             const response = await $axios.post('/auth/login', data);
-
             if (response.data) {
-                console.log('Login successful:', response.data);
-                localStorage.setItem('token', response.data.token);
+                saveToken(response.data.token);
+                navigate('/');
             } else {
                 throw new Error('Login failed: No data received');
             }
-
         } catch (error: any) {
-            if (error.response && error.response.data) {
-                console.log('Error:', error.response.data.message);
-            } else {
-                console.log('Error:', error.message);
-            }
+            console.log('Error:', error.response?.data?.message || error.message);
+            // Display error feedback to the user here
         }
     };
 
-
+    // Handle signup submission
     const handleSignup = async (data: SignUpSchema) => {
-        console.log('Signup Data:', data);
-
         try {
             const response = await $axios.post('/auth/register', data);
-
             if (response.data) {
-                console.log('Signup successful:', response.data);
                 saveToken(response.data.token);
+                navigate('/');
             } else {
                 throw new Error('Signup failed: No data received');
             }
         } catch (error: any) {
             console.error('Signup Error:', error.response?.data?.message || error.message);
+            // Display error feedback to the user here
         }
     };
 
+    // Redirect authenticated users away from the registration page
+    useEffect(() => {
+        if (isAuth) navigate('/');
+    }, [isAuth, navigate]);
 
     return (
-        <div className="flex h-full min-h-screen  bg-slate-800 text-slate-200">
+        <div className="flex h-full min-h-screen bg-slate-800 text-slate-200">
             <div className="grid grid-cols-1 md:grid-cols-2 w-full px-11 py-11 gap-8">
+                {/* Login Form */}
                 <form onSubmit={loginForm.handleSubmit(handleLogin)} className="flex flex-col gap-6 p-8 bg-slate-700 rounded-lg shadow-lg">
                     <h1 className="text-3xl font-semibold text-center">Login</h1>
-
                     <div className="flex flex-col gap-2">
                         <Label htmlFor="login-email" className="text-slate-300">Email</Label>
                         <Input
@@ -99,10 +98,10 @@ const Registration = () => {
                             {...loginForm.register("password")}
                         />
                     </div>
-
                     <Button type="submit" className="bg-slate-500 hover:bg-slate-600 text-white py-2 px-4 rounded-lg shadow focus:ring-slate-400">Login</Button>
                 </form>
 
+                {/* Signup Form */}
                 <form onSubmit={signupForm.handleSubmit(handleSignup)} className="flex flex-col gap-6 p-8 bg-slate-700 rounded-lg shadow-lg">
                     <h1 className="text-3xl font-semibold text-center">Sign Up</h1>
                     <div className="flex flex-col gap-2">
@@ -135,7 +134,6 @@ const Registration = () => {
                             {...signupForm.register("password")}
                         />
                     </div>
-
                     <Button type="submit" className="bg-slate-500 hover:bg-slate-600 text-white py-2 px-4 rounded-lg shadow focus:ring-slate-400">Sign Up</Button>
                 </form>
             </div>

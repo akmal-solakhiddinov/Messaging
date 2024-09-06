@@ -8,13 +8,15 @@ import MyProfile from "./pages/myProfile";
 import EditUser from "./pages/editUser";
 import SystemProvider from "./context/systemContext";
 import { Toaster } from "./components/ui/toaster";
+import ProtectedRoute from "./components/shared/ProtectedRoute";
 
 function App() {
   return (
     <BrowserRouter>
       <SystemProvider>
         <Routes>
-          <Route path="/" element={<Home />} >
+
+          <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>}>
             <Route path="room/:id" element={<Room />} />
             <Route path="profile/" element={<MyProfile />} />
             <Route path="profile/update" element={<EditUser />} />
