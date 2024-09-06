@@ -10,7 +10,7 @@ const useSocket = () => {
 
     useEffect(() => {
         if (user?.id) {
-            socket = io('http://localhost:4000', {
+            socket = io(import.meta.env.VITE_BASE_URL, {
                 query: { userId: user.id }
             });
 
