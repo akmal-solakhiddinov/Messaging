@@ -2,10 +2,11 @@ import { UserType } from "@/lib/type";
 import { Link, useNavigate } from "react-router-dom";
 import { Popover, PopoverContent } from "./ui/popover";
 import { PopoverTrigger } from "@radix-ui/react-popover";
-import { LucideCircleDot } from "lucide-react";
+import { LucideCircleDot, Menu } from "lucide-react";
 import { Button } from "./ui/button";
 import useDelete from "@/hooks/useDelete";
 import { useEffect } from "react";
+import { useSystem } from "@/context/systemContext";
 
 interface RoomNavbarProps {
     friend: UserType | null;
@@ -15,6 +16,8 @@ interface RoomNavbarProps {
 
 const RoomNavbar: React.FC<RoomNavbarProps> = ({ friend, roomId }) => {
     const navigate = useNavigate()
+    const { setSheet } = useSystem()
+
     const handleDeleteRoom = async () => {
         deleteItem(`rooms/delete/${roomId}`)
         navigate('/')
@@ -30,6 +33,7 @@ const RoomNavbar: React.FC<RoomNavbarProps> = ({ friend, roomId }) => {
     return (
         <div className="w-full bg-slate-700 py-5 px-6 h-14 flex items-center justify-between">
             <div className="flex items-center p-2 rounded-lg">
+                <Button variant={'ghost'} onClick={() => setSheet(true)} className="md:hidden p-0 pr-3"><Menu /></Button>
                 <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-800 font-bold mr-4 overflow-hidden">
                     {friend?.image ? (
                         <img src={friend.image} alt={friend.fullName} className="object-cover w-full h-full" />
@@ -49,6 +53,8 @@ const RoomNavbar: React.FC<RoomNavbarProps> = ({ friend, roomId }) => {
                 aria-label={`Status: ${friend.status}`}
             /> */}
             </div>
+
+
 
             <Popover>
                 <PopoverTrigger><LucideCircleDot /></PopoverTrigger>

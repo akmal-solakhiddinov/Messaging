@@ -27,15 +27,19 @@ const Room = () => {
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages]); // Scroll to bottom whenever messages change
+    }, [messages]);
 
     return (
-        <div className="flex flex-col h-screen">
+        // <div className="flex flex-col ">
+        <>
+            {/* Room Navbar */}
+
             <div className="sticky top-0 z-10">
                 <RoomNavbar friend={friend} roomId={id} />
             </div>
 
-            <ScrollArea className="h-[85vh] px-6  my-4 scroll-p-14 ">
+            {/* Messages Area */}
+            <ScrollArea className="px-6 my-4 scroll-p-14 flex-1 overflow-y-auto">
                 {isLoading ? (
                     <div>Loading...</div>
                 ) : (
@@ -50,12 +54,11 @@ const Room = () => {
                 )}
             </ScrollArea>
 
-            <div className="sticky bottom-0">
-                <div className="w-full bg-slate-700 py-5 px-6 h-14 flex items-center">
-                    <FormMessage receiverId={friend?.id} roomId={id} />
-                </div>
+            {/* Message Input */}
+            <div className="sticky bottom-0 bg-slate-700 p-3 px-6">
+                <FormMessage receiverId={friend?.id} roomId={id} />
             </div>
-        </div>
+        </>
     );
 };
 

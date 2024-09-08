@@ -7,16 +7,17 @@ interface Props {
 }
 
 const ProtectedRoute: React.FC<Props> = ({ children }) => {
-    const { isAuth } = useAuth();
+    const { isAuth, loading } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!isAuth) {
-            navigate('/registration');
+        if (!loading && !isAuth) {
+            navigate('/login');
         }
-    }, [isAuth, navigate]);
+    }, [isAuth, loading, navigate]);
 
-    // Only render children if authenticated
+    if (loading) return (<div>Loading...</div>);
+
     return isAuth ? <>{children}</> : null;
 };
 

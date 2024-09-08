@@ -26,7 +26,7 @@ interface Props {
 
 const UserItem: React.FC<Props> = ({ user }) => {
     return (
-        <li className="flex items-center p-2 rounded-lg hover:bg-slate-600 cursor-pointer">
+        <>
             <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-800 font-bold mr-4 overflow-hidden">
                 {user?.image ? (
                     <img src={user.image} alt={user.fullName} className="object-cover w-full h-full" />
@@ -44,7 +44,7 @@ const UserItem: React.FC<Props> = ({ user }) => {
                 title={user.status}
                 aria-label={`Status: ${user.status}`}
             />
-        </li>
+        </>
     )
 }
 

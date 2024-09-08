@@ -47,7 +47,7 @@ const Message: React.FC<MessageProps> = ({ message, type, reference }) => {
 
     return (
         <div className={`flex ${type === "right" ? "justify-end" : "justify-start"} mb-4`} ref={reference}>
-            <div className={`max-w-xs shadow-xl overflow-hidden w-max p-[3px] min-w-20 rounded-lg ${type === "right" ? "bg-slate-800 text-white" : "bg-slate-900 text-slate-50"}`}>
+            <div className={`max-w-60 shadow-xl overflow-hidden w-max p-[3px] min-w-20 rounded-lg ${type === "right" ? "bg-slate-800 text-white" : "bg-slate-900 text-slate-50"}`}>
 
                 {message.file && message.fileType ? (
                     <>

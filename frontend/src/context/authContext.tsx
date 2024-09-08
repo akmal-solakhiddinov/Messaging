@@ -7,56 +7,41 @@ interface AuthContextType {
     isAuth: boolean;
     loading: boolean;
     error: string;
+    fetchUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<UserType | null>(null);
-    const [isAuth, setIsAuth] = useState<boolean>(false);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>('');
 
-    // Function to fetch user profile
     const fetchUser = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('token'); // Fetch token inside function to ensure it's always current
+            const token = localStorage.getItem('token');
             if (!token) {
-                setIsAuth(false);
-                setUser(null);
-                return;
+                throw new Error('No token found');
             }
-            const req = await $axios.get('user/profile');
-            if (!req.data) {
-                throw new Error('Failed to fetch user data');
-            }
-            setUser(req.data);
-            setIsAuth(true);
+            const response = await $axios.get('user/profile');
+            setUser(response.data);
         } catch (error: any) {
-            setIsAuth(false);
             setUser(null);
-            if (error.response && error.response.data) {
-                setError(error.response.data.message || 'Failed to fetch user data');
-            } else {
-                setError(error.message || 'An unknown error occurred');
-            }
+            setError(error.response?.data?.message || error.message || 'An error occurred');
         } finally {
             setLoading(false);
         }
     };
 
-    // Effect to fetch user when token changes
     useEffect(() => {
         fetchUser();
     }, []);
 
-    // Watch for token changes and re-validate user
     useEffect(() => {
         const handleStorageChange = () => {
             fetchUser();
         };
-
         window.addEventListener('storage', handleStorageChange);
         return () => {
             window.removeEventListener('storage', handleStorageChange);
@@ -64,18 +49,18 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, loading, error, isAuth }}>
+        <AuthContext.Provider value={{ user, isAuth: !!user, loading, error, fetchUser }}>
             {children}
         </AuthContext.Provider>
     );
 };
 
-export default AuthProvider;
-
-export const useAuth = (): AuthContextType => {
+export const useAuth = () => {
     const context = useContext(AuthContext);
-    if (context === undefined) {
+    if (!context) {
         throw new Error('useAuth must be used within an AuthProvider');
     }
     return context;
 };
+
+export default AuthProvider;

@@ -3,8 +3,14 @@ import UserItem from "./userItem";
 import { Link } from "react-router-dom";
 import useSearchUsers from "@/hooks/useSearchUsers";
 import { UserType } from "@/lib/type";
+import { Button } from "../ui/button";
+import { X } from "lucide-react";
 
-const SearchBar = () => {
+interface Props {
+    closeBtn?: () => void;
+}
+
+const SearchBar: React.FC<Props> = ({ closeBtn }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const { isSearching, result: results } = useSearchUsers(searchQuery)
@@ -12,11 +18,11 @@ const SearchBar = () => {
 
     return (
         <div
-            className={`sticky top-0 bg-slate-700 z-20 transition-all duration-300 ${isExpanded ? 'absolute inset-0 w-full  ' : 'p-2'
+            className={`sticky top-0 bg-slate-700 z-20 transition-all duration-300 ${isExpanded ? 'absolute inset-0 w-full' : 'p-2'
                 }`}
         >
             {isExpanded ? (
-                <div className="flex flex-col  z-20  h-screen bg-slate-800 p-4">
+                <div className="flex flex-col h-screen bg-slate-800 p-4">
                     <button
                         className="self-end text-white"
                         onClick={() => setIsExpanded(false)}
@@ -45,16 +51,18 @@ const SearchBar = () => {
                             ) : (
                                 <p className="text-slate-400">No results found.</p>
                             )}
-
                         </div>
                     </form>
                 </div>
             ) : (
-                <div
-                    className="rounded-full bg-slate-200 p-2 text-slate-800 cursor-pointer"
-                    onClick={() => setIsExpanded(true)}
-                >
-                    Search
+                <div className="w-full flex justify-between items-center">
+                    <span
+                        className="rounded-full bg-slate-200 p-2 text-slate-800 cursor-pointer w-11/12"
+                        onClick={() => setIsExpanded(true)}
+                    >
+                        Search
+                    </span>
+                    {closeBtn && <Button onClick={closeBtn} className="md:hidden " variant={'ghost'}><X /></Button>}
                 </div>
             )}
         </div>

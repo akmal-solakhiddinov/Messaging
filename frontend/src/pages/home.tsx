@@ -1,22 +1,19 @@
-import SearchBar from '@/components/shared/searchBar';
-import UserList from '@/components/shared/userList';
+import Sidebar from '@/components/shared/sidebar';
 import { Outlet } from 'react-router-dom';
 
 
 const Home = () => {
-
     return (
         <div className="bg-slate-900 min-h-screen lg:p-6 flex">
-            <div className="bg-slate-800 lg:h-[92vh] rounded-2xl overflow-hidden shadow-lg grid md:grid-cols-[20rem_1fr]  w-full">
-                <aside className="bg-slate-700  border-r border-slate-600  h-screen lg:h-[92vh]  relative">
-                    <SearchBar />
-                    <UserList />
-                </aside>
-                <main className="bg-slate-800 h-full">
+            <div className="bg-slate-800 lg:h-[92vh] h-screen rounded-2xl overflow-hidden shadow-lg grid md:grid-cols-[20rem_1fr] w-full">
+                <Sidebar />
+
+                <main className="bg-slate-800 flex flex-col h-screen">
                     <Outlet />
                 </main>
             </div>
         </div>
+
     );
 };
 
