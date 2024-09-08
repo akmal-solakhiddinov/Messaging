@@ -1,7 +1,7 @@
 import UserItem from "./userItem";
 import useRoomFetch from "@/hooks/useRoomFetch";
 import { ScrollArea } from "../ui/scroll-area";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useSystem } from "@/context/systemContext";
 
 const UserList = () => {
