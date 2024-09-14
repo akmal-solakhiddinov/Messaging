@@ -28,7 +28,7 @@ type SignUpSchema = z.infer<typeof schemaSignUp>;
 
 const Register = () => {
     const signupForm = useForm<SignUpSchema>({ resolver: zodResolver(schemaSignUp) });
-    const { isAuth, fetchUser } = useAuth();
+    const { isAuth,  } = useAuth();
     const navigate = useNavigate();
     const [error, setError] = useState<string>('')
 
@@ -38,7 +38,7 @@ const Register = () => {
             const res = await $axios.post('/auth/register', data);
             if (res.data && res.data.token) {
                 saveToken(res.data.token);
-                fetchUser();
+                // fetchUser();
             } else {
                 setError(res.data.message || 'Unexpected response from the server.');
             }

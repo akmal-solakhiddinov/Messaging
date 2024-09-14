@@ -1,6 +1,6 @@
 import { useState } from "react";
 import UserItem from "./userItem";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import useSearchUsers from "@/hooks/useSearchUsers";
 import { UserType } from "@/lib/type";
 import { Button } from "../ui/button";

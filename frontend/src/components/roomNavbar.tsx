@@ -7,7 +7,7 @@ import { CiMenuKebab } from "react-icons/ci";
 import { Button } from "./ui/button";
 import useDelete from "@/hooks/useDelete";
 import { useEffect } from "react";
-import { useSystem } from "@/context/systemContext";
+// import { useSystem } from "@/context/systemContext";
 
 interface RoomNavbarProps {
     friend: UserType | null;
@@ -17,7 +17,7 @@ interface RoomNavbarProps {
 
 const RoomNavbar: React.FC<RoomNavbarProps> = ({ friend, roomId }) => {
     const navigate = useNavigate()
-    const { setSheet } = useSystem()
+    // const { setSheet } = useSystem()
 
     const handleDeleteRoom = async () => {
         deleteItem(`rooms/delete/${roomId}`)

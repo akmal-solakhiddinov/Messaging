@@ -25,7 +25,7 @@ const saveToken = (token: string) => {
 
 const Login = () => {
     const navigate = useNavigate();
-    const { isAuth, fetchUser } = useAuth();
+    const { isAuth } = useAuth();
     const { handleSubmit, register, formState: { isSubmitting } } = useForm<LoginSchema>({ resolver: zodResolver(schemaLogin) });
     const [error, setError] = useState<string>('')
 
@@ -36,7 +36,7 @@ const Login = () => {
             const res = await $axios.post('/auth/login', data);
             if (res.data && res.data.token) {
                 saveToken(res.data.token);
-                fetchUser();
+                // fetchUser();
             } else {
                 setError(res.data.message || 'Unexpected response from the server.');
             }

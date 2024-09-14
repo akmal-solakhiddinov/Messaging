@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import $axios from '../http/axios';
+import React, { createContext, useContext, useEffect, ReactNode } from 'react';
+// import $axios from '../http/axios';
 import { UserType } from '@/lib/type';
 import useFetchAuthUser from '@/hooks/useFetchAuthUser';
 

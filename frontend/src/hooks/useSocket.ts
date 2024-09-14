@@ -14,7 +14,7 @@ const useSocket = () => {
     const { toast } = useToast()
     const [isConnected, setIsConnected] = useState(false);
     const { pathname } = useLocation();;
-    const { loading, rooms } = useRoomFetch()
+    const { rooms } = useRoomFetch()
 
     const allRooms = useMemo(() => rooms.map(r => r.id), [rooms]);
 
