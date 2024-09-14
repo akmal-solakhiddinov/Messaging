@@ -46,12 +46,9 @@ const Login = () => {
         }
     };
 
-
-
     useEffect(() => {
         if (isAuth) navigate('/');
     }, [isAuth, navigate]);
-
 
 
     return (
