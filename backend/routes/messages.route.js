@@ -6,7 +6,7 @@ const verifyFriendship = require('../middlewares/verifyFriendship');
 const upload = require('../services/upload.service');
 
 router.post('/send/:roomId/:friendId', authorization, verifyFriendship, upload.single('file'), messagesController.send)
-router.put('/update/:messageId', authorization, isAuthor, messagesController.update)
+router.put('/update/:messageId', authorization, isAuthor, upload.single('file'), messagesController.update)
 router.delete('/delete/:messageId', authorization, isAuthor, messagesController.delete)
 router.get('/get-all/:roomId', authorization, messagesController.getAll)
 

@@ -19,7 +19,7 @@ const useFetchRoomMessages = (id: string | undefined) => {
             if (!id) throw new Error("Room ID is required");
             const response = await $axios.get(`rooms/room-messages/${id}`);
             return response.data;
-        },
+        }
     });
 
     const { user, messages } = data || { user: null, messages: [] };

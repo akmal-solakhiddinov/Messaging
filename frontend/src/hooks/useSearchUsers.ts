@@ -5,10 +5,10 @@ const useSearchUsers = (value: string) => {
     const { data: result, isLoading: isSearching } = useQuery({
         queryKey: ["profiles", value],  // Include `value` in the query key
         queryFn: async () => {
-            const res = await $axios.post('user/search', { query: value });  // Sending value in the request body
+            const res = await $axios.post('user/search', { query: value });
             return res.data;
         },
-        enabled: !!value,  // Only run the query if `value` is not empty
+        enabled: !!value,
     });
 
     return { result, isSearching };

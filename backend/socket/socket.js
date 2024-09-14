@@ -12,7 +12,10 @@ function initIO(server) {
             // console.log('A user connected:', socket.id, 'UserID:', userId);
             await userServise.update(userId, { status: 'online' });
 
+            // console.log(socket.)
+
             socket.on('joinRoom', (roomId) => {
+                // console.log(roomId);
                 socket.join(roomId);
                 // console.log(`User ${socket.id} joined room ${roomId}`);
             });

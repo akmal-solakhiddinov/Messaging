@@ -5,6 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import ModalFormEditMessage from "./modalFormEditMessage";
 import ModalDeleteItem from "./modalDeleteItem";
 import { useAuth } from "@/context/authContext";
+import { CiMenuKebab } from "react-icons/ci";
 
 const formatTime = (timestamp: string) => {
     const date = new Date(timestamp);
@@ -64,7 +65,9 @@ const Message: React.FC<MessageProps> = ({ message, type, reference }) => {
                     {
                         user?.id === message.sender.id && (<span>
                             <Popover>
-                                <PopoverTrigger>:</PopoverTrigger>
+                                <PopoverTrigger>
+                                    <CiMenuKebab size={12} />
+                                </PopoverTrigger>
                                 <PopoverContent className="max-w-min top-0 right-1/4 mx-10 flex flex-col gap-3">
                                     <ModalFormEditMessage message={message} />
                                     <ModalDeleteItem text="Do you realy want to delete this message" itemLink={`messages/delete/${message.id}`} />

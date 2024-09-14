@@ -1,6 +1,7 @@
-// import { useToast } from '@/components/ui/use-toast';
-// import useSocket from '@/hooks/useSocket';
-import React, { createContext, useContext, ReactNode, useState, } from 'react';
+import { useToast } from '@/components/ui/use-toast';
+import useSocket from '@/hooks/useSocket';
+import React, { createContext, useContext, ReactNode, useState, useEffect, } from 'react';
+import { useLocation } from 'react-router-dom';
 // import { string } from 'zod';
 // import { useLocation, } from 'react-router-dom';
 
@@ -12,9 +13,21 @@ interface SystemContextType {
 const SystemContext = createContext<SystemContextType | undefined>(undefined);
 
 const SystemProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const { pathname } = useLocation()
+    const { isConnected, socket } = useSocket()
     const [sheet, setSheet] = useState(false);
-
     const value = { sheet, setSheet }
+
+    useEffect(() => {
+
+        if (isConnected) {
+            socket.on('message', message => {
+                console.log(message)
+            })
+        }
+
+    }, [])
+
 
     return (
         <SystemContext.Provider value={value}>

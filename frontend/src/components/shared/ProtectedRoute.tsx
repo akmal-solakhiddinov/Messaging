@@ -1,6 +1,7 @@
 import { useAuth } from "@/context/authContext";
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Spinner from "./Spinner";
 
 interface Props {
     children: React.ReactNode;
@@ -16,7 +17,7 @@ const ProtectedRoute: React.FC<Props> = ({ children }) => {
         }
     }, [isAuth, loading, navigate]);
 
-    if (loading) return (<div>Loading...</div>);
+    if (loading) return (<div className=" bg-slate-800 w-full h-full absolute inset-0 flex items-center justify-center"> <Spinner /></div>);
 
     return isAuth ? <>{children}</> : null;
 };

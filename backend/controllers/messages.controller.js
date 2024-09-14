@@ -55,25 +55,22 @@ class MessageController {
             const { messageId } = req.params;
             const updatedMessage = req.body;
             const file = req.file;
-            console.log(req, "< file");
-            let newMessage;
-            let fileUrl;
-            if (file) {
-                fileUrl = await uploadFile(file);
+            let newMessage = { ...updatedMessage };
 
-                newMessage = { ...updatedMessage, file: fileUrl };
+            if (file) {
+                const fileUrl = await uploadFile(updatedMessage.fileType, file);
+                newMessage.file = fileUrl;
             }
 
-            newMessage = { ...updatedMessage };
-
-            console.log(newMessage, "<-- new message  from update controller");
             const { message } = await messagesService.update(messageId, newMessage);
 
             return res.status(201).json(message);
         } catch (error) {
+            // Error handling
             return res.status(400).json({ message: error.message });
         }
     }
+
 
     async delete(req, res, next) {
         try {

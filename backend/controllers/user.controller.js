@@ -30,8 +30,8 @@ class UserController {
 
             console.log(updatedUser, 'User update payload');
 
-            const newUser = await userService.update(userId, updatedUser);
-            return res.status(201).json({ user: newUser });
+            const { user } = await userService.update(userId, updatedUser);
+            return res.status(201).json(user);
         } catch (error) {
             console.error('Update error:', error);
             return res.status(400).json({ message: error.message });

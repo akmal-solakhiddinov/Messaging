@@ -1,10 +1,11 @@
 import { useState } from "react";
 import UserItem from "./userItem";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import useSearchUsers from "@/hooks/useSearchUsers";
 import { UserType } from "@/lib/type";
 import { Button } from "../ui/button";
-import { X } from "lucide-react";
+import { Search, X } from "lucide-react";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface Props {
     closeBtn?: () => void;
@@ -18,7 +19,7 @@ const SearchBar: React.FC<Props> = ({ closeBtn }) => {
 
     return (
         <div
-            className={`sticky top-0 bg-slate-700 z-20 transition-all duration-300 ${isExpanded ? 'absolute inset-0 w-full' : 'p-2'
+            className={`transition-all duration-300 ${isExpanded ? 'absolute inset-0 w-full z-40' : ''
                 }`}
         >
             {isExpanded ? (
@@ -41,13 +42,18 @@ const SearchBar: React.FC<Props> = ({ closeBtn }) => {
                             {isSearching ? (
                                 <p className="text-slate-400">Searching...</p>
                             ) : results?.length > 0 ? (
-                                <ul className="space-y-2">
-                                    {results.map((result: UserType) => (
-                                        <Link key={result.id} to={`profile/${result.id}`}>
+                                <ScrollArea className="space-y-2 h-full scroll-p-10 ">
+                                    {results?.map((result: UserType) => (
+                                        <NavLink
+                                            to={`/profile/${result?.id}`} key={result.id}
+                                            className={({ isActive }) =>
+                                                `flex last:mb-20 items-center p-2 rounded-lg cursor-pointer ${isActive ? 'bg-slate-600 text-white' : 'hover:bg-slate-600'
+                                                }`
+                                            }>
                                             <UserItem user={result} />
-                                        </Link>
+                                        </NavLink >
                                     ))}
-                                </ul>
+                                </ScrollArea>
                             ) : (
                                 <p className="text-slate-400">No results found.</p>
                             )}
@@ -57,10 +63,10 @@ const SearchBar: React.FC<Props> = ({ closeBtn }) => {
             ) : (
                 <div className="w-full flex justify-between items-center">
                     <span
-                        className="rounded-full bg-slate-200 p-2 text-slate-800 cursor-pointer w-11/12"
+                        className=" cursor-pointer"
                         onClick={() => setIsExpanded(true)}
                     >
-                        Search
+                        <Search />
                     </span>
                     {closeBtn && <Button onClick={closeBtn} className="md:hidden " variant={'ghost'}><X /></Button>}
                 </div>

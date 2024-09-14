@@ -1,3 +1,4 @@
+import { useToast } from "@/components/ui/use-toast";
 import $axios from "@/http/axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
@@ -11,10 +12,9 @@ interface EditMessageParams {
 
 const useEditMessage = () => {
     const queryClient = useQueryClient()
+    const { toast } = useToast()
     const { mutate: editMessage, isPending: isEditing } = useMutation({
         mutationFn: async ({ data, messageId }: EditMessageParams) => {
-
-
 
             const res = await $axios.put(`messages/update/${messageId}`, data, {
                 headers: {
@@ -29,6 +29,12 @@ const useEditMessage = () => {
                 queryKey: ["messages"]
             });
         },
+        onError: (error: Error) => {
+            toast({
+                title: 'Error',
+                description: error.message
+            })
+        }
     });
 
     return { editMessage, isEditing }

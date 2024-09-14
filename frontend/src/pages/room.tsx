@@ -1,6 +1,7 @@
 import FormMessage from "@/components/formMessage";
 import RoomNavbar from "@/components/roomNavbar";
 import Message from "@/components/shared/message";
+import Spinner from "@/components/shared/Spinner";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/context/authContext";
 import useFetchRoomMessages from "@/hooks/useFetchRoomMessages";
@@ -30,31 +31,32 @@ const Room = () => {
     }, [messages]);
 
     return (
-        // <div className="flex flex-col ">
         <>
-            {/* Room Navbar */}
-
             <div className="sticky top-0 z-10">
                 <RoomNavbar friend={friend} roomId={id} />
             </div>
 
-            {/* Messages Area */}
-            <ScrollArea className="px-6 my-4 scroll-p-14 flex-1 overflow-y-auto">
-                {isLoading ? (
-                    <div>Loading...</div>
-                ) : (
-                    messages?.map((message: MessageType, index: number) => (
-                        <Message
-                            message={message}
-                            key={message.id}
-                            type={message.sender.id === user?.id ? 'right' : 'left'}
-                            reference={messages?.length - 1 === index ? messagesEndRef : null}
-                        />
-                    ))
-                )}
+            <ScrollArea className="  px-6 my-4 scroll-p-14 flex-1 overflow-y-auto  ">
+                {isLoading ?
+                    (
+                        <div className=" bg-slate-800 w-full h-full absolute inset-0 flex items-center justify-center">
+                            <Spinner />
+                        </div>
+                    )
+                    :
+                    (
+                        messages?.map((message: MessageType, index: number) => (
+                            <Message
+                                message={message}
+                                key={message.id}
+                                type={message.sender.id === user?.id ? 'right' : 'left'}
+                                reference={messages?.length - 1 === index ? messagesEndRef : null}
+                            />
+                        ))
+                    )}
             </ScrollArea>
 
-            {/* Message Input */}
+
             <div className="sticky bottom-0 bg-slate-700 p-3 px-6">
                 <FormMessage receiverId={friend?.id} roomId={id} />
             </div>

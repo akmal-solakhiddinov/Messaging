@@ -2,7 +2,8 @@ import { UserType } from "@/lib/type";
 import { Link, useNavigate } from "react-router-dom";
 import { Popover, PopoverContent } from "./ui/popover";
 import { PopoverTrigger } from "@radix-ui/react-popover";
-import { LucideCircleDot, Menu } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { CiMenuKebab } from "react-icons/ci";
 import { Button } from "./ui/button";
 import useDelete from "@/hooks/useDelete";
 import { useEffect } from "react";
@@ -33,7 +34,11 @@ const RoomNavbar: React.FC<RoomNavbarProps> = ({ friend, roomId }) => {
     return (
         <div className="w-full bg-slate-700 py-5 px-6 h-14 flex items-center justify-between">
             <div className="flex items-center p-2 rounded-lg">
-                <Button variant={'ghost'} onClick={() => setSheet(true)} className="md:hidden p-0 pr-3"><Menu /></Button>
+
+                {/* <Button variant={'ghost'} onClick={() => setSheet(true)} className="md:hidden p-0 pr-3"><Menu /></Button> */}
+
+                <Button variant={'ghost'} className=" hover:bg-none md:hidden p-0 pr-3 " onClick={() => navigate('/')}><ArrowLeft /></Button>
+
                 <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-800 font-bold mr-4 overflow-hidden">
                     {friend?.image ? (
                         <img src={friend.image} alt={friend.fullName} className="object-cover w-full h-full" />
@@ -57,12 +62,12 @@ const RoomNavbar: React.FC<RoomNavbarProps> = ({ friend, roomId }) => {
 
 
             <Popover>
-                <PopoverTrigger><LucideCircleDot /></PopoverTrigger>
+                <PopoverTrigger><CiMenuKebab /></PopoverTrigger>
                 <PopoverContent className="max-w-max">
                     <Button onClick={handleDeleteRoom} disabled={isDeleting}>Delete</Button>
                 </PopoverContent>
             </Popover>
-        </div>
+        </div >
     );
 };
 

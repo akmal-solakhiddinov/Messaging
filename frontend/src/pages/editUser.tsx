@@ -39,6 +39,7 @@ const EditUser = () => {
             if (data.fullName) formData.append('fullName', data.fullName);
             if (data.username) formData.append('username', data.username);
             if (data.email) formData.append('email', data.email);
+            console.log(data.account, user?.account)
             if (data.account && data.account !== user?.account) {
                 formData.append('account', data.account);
             }
@@ -54,7 +55,6 @@ const EditUser = () => {
             console.log([...formData.entries()])
 
             editUser(formData)
-
         } catch (error) {
             console.error('Error submitting form:', error);
         }
