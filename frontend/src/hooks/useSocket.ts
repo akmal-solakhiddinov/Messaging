@@ -69,7 +69,7 @@ useEffect(() => {
         return () => {
             socket.disconnect();
         };
-    // }
+    }
 }, [user?.id, allRooms, toast, pathname, isAuth]);
 
     return { socket, isConnected };
