@@ -2,7 +2,7 @@ import { io, Socket } from 'socket.io-client';
 import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '@/context/authContext';
 import { useLocation } from 'react-router-dom';
-import { MessageType } from '@/lib/type';
+// import { MessageType } from '@/lib/type';
 import { useToast } from '@/components/ui/use-toast';
 import useRoomFetch from './useRoomFetch';
 
@@ -18,31 +18,20 @@ const useSocket = () => {
 
     const allRooms = useMemo(() => rooms.map(r => r.id), [rooms]);
 
-    const handleRoomMessage = (message: MessageType) => {
-        const roomId = pathname.split('/')[2]
-        // if (roomId == message.chatId) return
-        if (roomId !== message.chatId) {
-            toast({
-                title: 'New Message',
-                description: message.content
-            })
-            console.log(message);
-        }
-
-        return
-    }
-
 
 
     useEffect(() => {
         if (user?.id) {
             socket = io(import.meta.env.VITE_BASE_URL, {
-                query: { userId: user.id }
+                query: { userId: user.id },
+                autoConnect: false
             });
 
             socket.on('connect', () => {
                 console.log('Socket connected:', socket.id);
-                socket.emit('joinRoom', [user.id, ...allRooms])
+                socket.emit('joinRoom', [user.id, ...allRooms]);
+                console.log('User joined rooms:', [user.id, ...allRooms]);
+
                 setIsConnected(true);
             });
 
@@ -52,12 +41,19 @@ const useSocket = () => {
                 console.log('Parsed notification:', parsedNotification);
             });
 
+            socket.on('message', async message => {
+                const roomId = pathname.split('/')[2];
+                console.log('Message chatId:', message.chatId);
 
-            socket.on('message', message => {
-                handleRoomMessage(message)
-            })
-
-
+                if (roomId === message.chatId) {
+                    return;
+                } else {
+                    toast({
+                        title: 'New Message',
+                        description: message.content || 'No content',
+                    });
+                }
+            });
 
             socket.on('disconnect', () => {
                 console.log('Socket disconnected');
@@ -68,11 +64,10 @@ const useSocket = () => {
                 socket.disconnect();
             };
         }
-    }, [user?.id]);
-
-
-
+    }, [user?.id, allRooms, toast, pathname]);
     return { socket, isConnected };
 };
+
+
 
 export default useSocket;

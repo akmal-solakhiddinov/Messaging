@@ -16,6 +16,7 @@ model User {
   lastLogin        DateTime?
   password         String
   image            String?     @db.Text()
+  isActivated      Boolean     @default(false)
   created          DateTime    @default(now())
   updated          DateTime    @updatedAt
   deleted          Boolean     @default(false)
@@ -29,6 +30,7 @@ model User {
   RequestFriend      Request[]  @relation("friend")
   userByFriends      Friends[]  @relation("userBy")
   relatedUserFriends Friends[]  @relation("relatedUser")
+  Token              Token[]
 
   @@index([email], name: "idx_email")
   @@index([username], name: "idx_username")
@@ -97,6 +99,13 @@ model Friends {
   relatedUser User @relation("relatedUser", fields: [relatedUserId], references: [id])
 
   @@unique([userId, relatedUserId], name: "idx_user_relatedUser")
+}
+
+model Token {
+  id     String @id @default(uuid())
+  userId String @unique
+  token  String @db.Text
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum FileType {

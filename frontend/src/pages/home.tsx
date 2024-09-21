@@ -1,8 +1,11 @@
 import Sidebar from '@/components/shared/sidebar';
-import { Outlet } from 'react-router-dom';
+import useSEO from '@/hooks/useSEO';
+import { Outlet, useLocation } from 'react-router-dom';
 
 
 const Home = () => {
+    const { pathname } = useLocation()
+    useSEO(`${pathname === '/' && 'Home'}`)
     return (
         <div className="bg-slate-900 min-h-screen lg:p-6 flex">
             <div className="bg-slate-800 lg:h-[92vh] h-screen rounded-2xl overflow-hidden shadow-lg grid md:grid-cols-[20rem_1fr] w-full">

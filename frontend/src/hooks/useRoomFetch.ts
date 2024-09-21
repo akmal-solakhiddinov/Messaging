@@ -1,6 +1,6 @@
 import $axios from "@/http/axios"
 import { UserType } from "@/lib/type";
-import { useEffect, useState } from "react"
+import { useQuery } from "@tanstack/react-query";
 
 interface RoomProps {
     id: string;
@@ -8,31 +8,16 @@ interface RoomProps {
 }
 
 const useRoomFetch = () => {
-    const [rooms, setRooms] = useState<RoomProps[]>([])
-    const [error, setError] = useState<string>('')
-    const [loading, setLoading] = useState<boolean>(false)
-
-    useEffect(() => {
-        const fetchRooms = async () => {
-            setLoading(true)
-            try {
-                const res = await $axios.get('/rooms/get-all')
-                if (!res.data) {
-                    throw new Error(res.data.message)
-                }
-                setRooms(res.data)
-            } catch (error) {
-                if (error instanceof Error)
-                    setError(error.message)
-            } finally {
-                setLoading(false)
-            }
+    const { data: rooms = [], error, isLoading } = useQuery<RoomProps[]>({
+        queryKey: ["rooms"],
+        queryFn: async () => {
+            const res = await $axios.get('/rooms/get-all')
+            return res.data
         }
+    })
 
-        fetchRooms()
-    }, [])
 
-    return { error, loading, rooms }
+    return { error, isLoading, rooms }
 }
 
 export default useRoomFetch;

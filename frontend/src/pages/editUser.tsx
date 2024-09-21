@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/authContext";
 import useEditUser from "@/hooks/useEditUser";
+import useSEO from "@/hooks/useSEO";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-// import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 // Validation schema
@@ -19,9 +19,11 @@ type Schema = z.infer<typeof userSchema>;
 
 const EditUser = () => {
     const { user } = useAuth();
-    const { editUser, } = useEditUser()
+    const { editUser } = useEditUser();
+    useSEO('Edit User')
 
-    const { handleSubmit, register, formState: { isSubmitting } } = useForm<Schema>({
+
+    const { handleSubmit, register, formState: { isSubmitting, errors } } = useForm<Schema>({
         resolver: zodResolver(userSchema),
         defaultValues: {
             fullName: user?.fullName,
@@ -39,68 +41,85 @@ const EditUser = () => {
             if (data.fullName) formData.append('fullName', data.fullName);
             if (data.username) formData.append('username', data.username);
             if (data.email) formData.append('email', data.email);
-            console.log(data.account, user?.account)
-            if (data.account && data.account !== user?.account) {
-                formData.append('account', data.account);
-            }
-
+            if (data.account && data.account !== user?.account) formData.append('account', data.account);
 
             if (data.image && data.image instanceof FileList && data.image.length > 0) {
                 const image = data.image[0];
                 formData.append('image', image);
             }
 
-
-            console.log(data)
-            console.log([...formData.entries()])
-
-            editUser(formData)
+            editUser(formData);
         } catch (error) {
             console.error('Error submitting form:', error);
         }
     };
 
-
-
     return (
-        <div className="p-6">
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3 max-w-md">
-                <input
-                    type="text"
-                    {...register('fullName')}
-                    placeholder="Your Full Name"
-                    className="p-2 bg-slate-100 rounded-sm font-medium"
-                    defaultValue={user?.fullName}
-                />
-                <input
-                    type="text"
-                    {...register('username')}
-                    placeholder="Your Username"
-                    className="p-2 bg-slate-100 rounded-sm font-medium"
-                    defaultValue={user?.username}
-                />
-                <input
-                    type="email"
-                    {...register('email')}
-                    placeholder="Your Email"
-                    className="p-2 bg-slate-100 rounded-sm font-medium"
-                    defaultValue={user?.email}
-                />
-                <select {...register('account')} className="p-2 bg-slate-100 rounded-sm font-medium" >
-                    <option value="public">Public</option>
-                    <option value="private">Private</option>
-                </select>
-                <input
-                    type="file"
-                    {...register('image')}
-                    className="p-2 bg-slate-100 rounded-sm font-medium"
-                    accept="image/*"
-                />
-                <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? 'Submitting...' : 'Submit'}
-                </Button>
-            </form>
+        <div className="p-8">
+            <div className="max-w-lg mx-auto p-5 bg-white rounded-xl  shadow-lg ">
+                <h2 className="text-2xl font-semibold text-center mb-4 text-gray-800">Edit Profile</h2>
+                <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Full Name</label>
+                        <input
+                            type="text"
+                            {...register('fullName')}
+                            className="mt-1 p-2 block w-full bg-gray-100 border border-gray-300 rounded-md focus:ring focus:ring-indigo-500"
+                            placeholder="Your Full Name"
+                        />
+                        {errors.fullName && <p className="text-red-600 text-sm mt-1">Full Name is required</p>}
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Username</label>
+                        <input
+                            type="text"
+                            {...register('username')}
+                            className="mt-1 p-2 block w-full bg-gray-100 border border-gray-300 rounded-md focus:ring focus:ring-indigo-500"
+                            placeholder="Your Username"
+                        />
+                        {errors.username && <p className="text-red-600 text-sm mt-1">Username is required</p>}
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Email</label>
+                        <input
+                            type="email"
+                            {...register('email')}
+                            className="mt-1 p-2 block w-full bg-gray-100 border border-gray-300 rounded-md focus:ring focus:ring-indigo-500"
+                            placeholder="Your Email"
+                        />
+                        {errors.email && <p className="text-red-600 text-sm mt-1">Valid email is required</p>}
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Account Type</label>
+                        <select
+                            {...register('account')}
+                            className="mt-1 p-2 block w-full bg-gray-100 border border-gray-300 rounded-md focus:ring focus:ring-indigo-500"
+                        >
+                            <option value="public">Public</option>
+                            <option value="private">Private</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Profile Image</label>
+                        <input
+                            type="file"
+                            {...register('image')}
+                            className="mt-1 p-2 block w-full bg-gray-100 border border-gray-300 rounded-md focus:ring focus:ring-indigo-500"
+                            accept="image/*"
+                        />
+                    </div>
+
+                    <Button type="submit" disabled={isSubmitting} className="mt-4 w-full">
+                        {isSubmitting ? 'Submitting...' : 'Save Changes'}
+                    </Button>
+                </form>
+            </div>
         </div>
+
     );
 };
 

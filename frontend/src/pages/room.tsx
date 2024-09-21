@@ -15,8 +15,8 @@ const Room = () => {
     const { id } = useParams<string>();
     const { user } = useAuth();
     const { user: friend, messages, isLoading } = useFetchRoomMessages(id);
-    useRealTimeMessages(id);
 
+    useRealTimeMessages(id);
 
     const scrollToBottom = () => {
         if (messagesEndRef.current) {
@@ -36,12 +36,11 @@ const Room = () => {
                 <RoomNavbar friend={friend} roomId={id} />
             </div>
 
-            <ScrollArea className="  px-6 my-4 scroll-p-14 flex-1 overflow-y-auto  ">
+
+            <ScrollArea className="  px-6 my-4 scroll-p-14 flex-1 overflow-y-auto">
                 {isLoading ?
                     (
-                        <div className=" bg-slate-800 w-full h-full absolute inset-0 flex items-center justify-center">
-                            <Spinner />
-                        </div>
+                        <Spinner />
                     )
                     :
                     (

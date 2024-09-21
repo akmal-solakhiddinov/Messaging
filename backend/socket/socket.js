@@ -10,7 +10,8 @@ function initIO(server) {
         const userId = socket.handshake.query.userId;
         if (userId) {
             // console.log('A user connected:', socket.id, 'UserID:', userId);
-            await userServise.update(userId, { status: 'online' });
+            const now = new Date()
+            await userServise.update(userId, { status: 'online', lastLogin: now });
 
             // console.log(socket.)
 
@@ -43,7 +44,7 @@ function initIO(server) {
 
             socket.on('disconnect', async () => {
                 console.log('User disconnected:', socket.id);
-                await userServise.update(userId, { status: 'offline' });
+                await userServise.update(userId, { status: 'offline', lastLogin: now });
             });
         } else {
             console.log('User connected without userId:', socket.id);
