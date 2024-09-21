@@ -25,14 +25,14 @@ useEffect(() => {
         console.log('Socket URL:', socketUrl);
 
         socket = io(socketUrl, {
-            query: { userId: user.id },
+            query: { userId: user?.id },
             autoConnect: false,
         });
 
         socket.on('connect', () => {
             console.log('Socket connected:', socket.id);
-            socket.emit('joinRoom', [user.id, ...allRooms]);
-            console.log('User joined rooms:', [user.id, ...allRooms]);
+            socket.emit('joinRoom', [user?.id, ...allRooms]);
+            console.log('User joined rooms:', [user?.id, ...allRooms]);
 
             setIsConnected(true);
         });
