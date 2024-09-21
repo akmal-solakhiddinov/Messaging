@@ -20,13 +20,12 @@ const useSocket = () => {
 
 
 useEffect(() => {
-    // if (isAuth) {
+    if (isAuth) {
         const socketUrl = import.meta.env.VITE_BASE_URL;
         console.log('Socket URL:', socketUrl);
 
         socket = io(socketUrl, {
-            query: { userId: user?.id },
-            autoConnect: false,
+            query: { userId: user?.id }
         });
 
         socket.on('connect', () => {
