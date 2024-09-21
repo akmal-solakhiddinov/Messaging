@@ -10,7 +10,7 @@ import useRoomFetch from './useRoomFetch';
 let socket: Socket;
 
 const useSocket = () => {
-    const { user } = useAuth();
+    const { isAuth, user } = useAuth();
     const { toast } = useToast()
     const [isConnected, setIsConnected] = useState(false);
     const { pathname } = useLocation();;
@@ -20,7 +20,7 @@ const useSocket = () => {
 
 
 useEffect(() => {
-    if (user?.id) {
+    // if (isAuth) {
         const socketUrl = import.meta.env.VITE_BASE_URL;
         console.log('Socket URL:', socketUrl);
 
@@ -70,8 +70,8 @@ useEffect(() => {
         return () => {
             socket.disconnect();
         };
-    }
-}, [user?.id, allRooms, toast, pathname]);
+    // }
+}, [user?.id, allRooms, toast, pathname, isAuth]);
 
     return { socket, isConnected };
 };
