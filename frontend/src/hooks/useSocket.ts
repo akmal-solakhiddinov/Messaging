@@ -19,52 +19,60 @@ const useSocket = () => {
     const allRooms = useMemo(() => rooms.map(r => r.id), [rooms]);
 
 
+useEffect(() => {
+    if (user?.id) {
+        const socketUrl = import.meta.env.VITE_BASE_URL;
+        console.log('Socket URL:', socketUrl);
 
-    useEffect(() => {
-        if (user?.id) {
-            socket = io(import.meta.env.VITE_BASE_URL, {
-                query: { userId: user.id },
-                autoConnect: false
-            });
+        socket = io(socketUrl, {
+            query: { userId: user.id },
+            autoConnect: false,
+        });
 
-            socket.on('connect', () => {
-                console.log('Socket connected:', socket.id);
-                socket.emit('joinRoom', [user.id, ...allRooms]);
-                console.log('User joined rooms:', [user.id, ...allRooms]);
+        socket.on('connect', () => {
+            console.log('Socket connected:', socket.id);
+            socket.emit('joinRoom', [user.id, ...allRooms]);
+            console.log('User joined rooms:', [user.id, ...allRooms]);
 
-                setIsConnected(true);
-            });
+            setIsConnected(true);
+        });
 
-            socket.on('notification', notification => {
-                console.log('Notification received:', notification);
-                const parsedNotification = JSON.parse(notification);
-                console.log('Parsed notification:', parsedNotification);
-            });
+        socket.on('notification', (notification) => {
+            const parsedNotification = JSON.parse(notification);
+            console.log('Parsed notification:', parsedNotification);
+        });
 
-            socket.on('message', async message => {
-                const roomId = pathname.split('/')[2];
-                console.log('Message chatId:', message.chatId);
+        socket.on('message', (message) => {
+            const roomId = pathname.split('/')[2];
+            console.log('Message chatId:', message.chatId);
 
-                if (roomId === message.chatId) {
-                    return;
-                } else {
-                    toast({
-                        title: 'New Message',
-                        description: message.content || 'No content',
-                    });
-                }
-            });
+            if (roomId !== message.chatId) {
+                toast({
+                    title: 'New Message',
+                    description: message.content || 'No content',
+                });
+            }
+        });
 
-            socket.on('disconnect', () => {
-                console.log('Socket disconnected');
-                setIsConnected(false);
-            });
+        socket.on('connect_error', (error) => {
+            console.error('Socket connection error:', error);
+        });
 
-            return () => {
-                socket.disconnect();
-            };
-        }
-    }, [user?.id, allRooms, toast, pathname]);
+        socket.on('connect_failed', () => {
+            console.error('Socket connection failed');
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Socket disconnected');
+            setIsConnected(false);
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }
+}, [user?.id, allRooms, toast, pathname]);
+
     return { socket, isConnected };
 };
 
