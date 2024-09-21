@@ -9,17 +9,21 @@
 
 
 // }
+export function formatTime(dateStr: string | undefined = ''): string {
+    // Check if the date string is valid
+    const date = new Date(dateStr || "");
 
+    // If the date is invalid, return a fallback value (e.g., empty string or 'Invalid date')
+    if (isNaN(date.getTime())) {
+        return 'Invalid date'; // You can customize this as needed
+    }
 
-
-export function formatTime(dateStr: string | undefined): string {
     return new Intl.DateTimeFormat("en", {
         day: "numeric",
         month: "short",
         hour: "2-digit",
         minute: "2-digit",
-    }).format(new Date(dateStr || "")
-    );
+    }).format(date);
 }
 
 

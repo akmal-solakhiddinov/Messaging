@@ -86,10 +86,12 @@ class UserService {
                 user.chatRooms1?.[0]?.id || user.chatRooms2?.[0]?.id || null;
 
             // Adjust account type based on friendship status
+            console.log('start')
             const accountType =
-                user.account === 'private' && user.RequestFriend.length > 0 || chatRoomId.length > 0
+                user.account === 'private' && user.RequestFriend.length > 0 || (chatRoomId !== null && chatRoomId.length) > 0
                     ? 'public'
                     : user.account;
+            console.log(accountType, 'account type')
 
             const response = {
                 id: user.id,
@@ -105,6 +107,7 @@ class UserService {
                 updated: user.updated,
             };
 
+            // console.log('my id: ', myUserId, 'user id: ', userId)
             return { user: response };
         } catch (error) {
             throw new Error(`Error retrieving profile for user ID ${id}: ${error.message}`);
