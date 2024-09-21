@@ -15,6 +15,10 @@ initIO(server)
 app.use(cors())
 app.use(express.json());
 
+// const mail = require('./services/main.service')
+// 
+// mail.sendActivationMail('salohiddinovakmalofficial@gmail.com', 'salom text')
+
 app.get('/', (req, res, next) => {
     res.status(200).json({ message: 'hello world' });
 });

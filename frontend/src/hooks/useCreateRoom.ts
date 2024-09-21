@@ -8,7 +8,7 @@ const useCreateRoom = () => {
     const { toast } = useToast()
     const { mutate: createRoom, isPending: isCreatingRoom, data: newRoom } = useMutation({
         mutationKey: ["createRoom"],
-        mutationFn: async (friendId) => {
+        mutationFn: async (friendId: string | undefined) => {
             const res = await $axios.post(`rooms/create/${friendId}`);
 
             navigate(`/room/${res.data.id}`)

@@ -4,6 +4,7 @@ const requestService = require('./request.service');
 
 class UserService {
     async profile(userId) {
+        // console.log(userId, '<use rid');
         try {
             const user = await prisma.user.findUnique({ where: { id: userId } });
             if (!user) throw new Error('User not found');
@@ -15,12 +16,10 @@ class UserService {
 
     async update(userId, updatedFields) {
         try {
-            // Handle account status changes
             if (updatedFields.account) {
                 if (updatedFields.account === 'public') {
                     await requestService.deleteRequest(userId);
                 }
-                // You can extend this for other account-related updates if needed
             }
 
             const user = await prisma.user.update({
@@ -66,20 +65,21 @@ class UserService {
         }
     }
 
-    async getOneProfile(userId, id) {
+    async getOneProfile(myUserId, userId) {
         try {
             const user = await prisma.user.findUnique({
-                where: { id },
+                where: { id: userId },
                 include: {
-                    chatRooms1: { where: { userTwoId: userId }, select: { id: true } },
-                    chatRooms2: { where: { userOneId: userId }, select: { id: true } },
+                    chatRooms1: { where: { userTwoId: myUserId }, select: { id: true } },
+                    chatRooms2: { where: { userOneId: myUserId }, select: { id: true } },
                     RequestFriend: {
-                        where: { senderId: userId, status: 'approved' },
+                        where: { senderId: myUserId, status: 'approved' },
                         select: { id: true },
                     },
                 },
             });
 
+            // console.log(user);
             if (!user) throw new Error('User not found');
 
             const chatRoomId =
@@ -87,7 +87,7 @@ class UserService {
 
             // Adjust account type based on friendship status
             const accountType =
-                user.account === 'private' && user.RequestFriend.length > 0
+                user.account === 'private' && user.RequestFriend.length > 0 || chatRoomId.length > 0
                     ? 'public'
                     : user.account;
 

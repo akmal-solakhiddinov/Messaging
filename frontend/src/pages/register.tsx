@@ -3,18 +3,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/authContext";
-import $axios from "@/http/axios";
+import useDontAllowRoute from "@/hooks/useDontAllowRoute";
+import useRegister from "@/hooks/useRegister";
+import useSEO from "@/hooks/useSEO";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { LucideX } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, } from "react-router-dom";
 import { z } from "zod";
 
 
 
-const saveToken = (token: string) => {
-    localStorage.setItem('token', token);
-};
+
 
 // Validation schemas
 const schemaSignUp = z.object({
@@ -28,29 +28,17 @@ type SignUpSchema = z.infer<typeof schemaSignUp>;
 
 const Register = () => {
     const signupForm = useForm<SignUpSchema>({ resolver: zodResolver(schemaSignUp) });
-    const { isAuth,  } = useAuth();
-    const navigate = useNavigate();
-    const [error, setError] = useState<string>('')
+    const { isAuth, isActivated, user } = useAuth();
+    const { error, isError, isSuccess, register, reset, isRegistering } = useRegister()
+    useDontAllowRoute()
+    useSEO('Registration')
 
 
     const handleSignup = async (data: SignUpSchema) => {
-        try {
-            const res = await $axios.post('/auth/register', data);
-            if (res.data && res.data.token) {
-                saveToken(res.data.token);
-                // fetchUser();
-            } else {
-                setError(res.data.message || 'Unexpected response from the server.');
-            }
-        } catch (error: any) {
-            setError(error.response?.data?.message || 'An error occurred during register.');
-            console.error('Sign up Error:', error.response?.data?.message || error.message);
-        }
+        register(data)
     };
 
-    useEffect(() => {
-        if (isAuth) navigate('/');
-    }, [isAuth, navigate]);
+
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-slate-800 text-slate-200">
@@ -60,14 +48,22 @@ const Register = () => {
                     <CardDescription className="text-slate-400">
                         Create your account to get started
                     </CardDescription>
-                    {error && (
+                    {isError && (
                         <div className="flex items-center justify-between gap-2 px-4 py-2 mt-4 bg-red-600 text-white rounded-md shadow-md">
-                            <span>{error}</span>
-                            <button
-                                onClick={() => setError('')}
-                                className="text-white hover:text-slate-200 transition-colors"
-                            >
-                                ✕
+                            <span>{error.response?.data.message}</span>
+                            <button onClick={reset} className="text-white hover:text-slate-200 transition-colors">
+                                <LucideX />
+                            </button>
+                        </div>
+                    )}
+
+                    {isSuccess || (isAuth && !isActivated) && (
+                        <div className="flex items-center justify-between gap-2 px-4 py-2 mt-4 bg-red-600 text-white rounded-md shadow-md">
+                            <span>
+                                Check your email we have sent you <strong>{user?.email}</strong> an activation link, link <strong>expires</strong> in <strong>5 minutes</strong>
+                            </span>
+                            <button onClick={reset} className="text-white hover:text-slate-200 transition-colors">
+                                <LucideX />
                             </button>
                         </div>
                     )}
@@ -120,6 +116,7 @@ const Register = () => {
                         <Button
                             type="submit"
                             className="bg-slate-500 hover:bg-slate-600 text-white py-2 rounded-lg shadow focus:ring-2 focus:ring-slate-400 transition-colors"
+                            disabled={isRegistering}
                         >
                             Sign Up
                         </Button>

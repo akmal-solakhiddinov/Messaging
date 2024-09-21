@@ -32,8 +32,16 @@ class RoomService {
                 },
                 select: {
                     id: true,
-                    userOne: { select: { username: true, email: true, id: true, image: true, fullName: true, status: true } },
-                    userTwo: { select: { username: true, email: true, id: true, image: true, fullName: true, status: true } },
+                    userOne: {
+                        select: {
+                            username: true, email: true, id: true, image: true, lastLogin: true, fullName: true, status: true,
+                        }
+                    },
+                    userTwo: {
+                        select: {
+                            username: true, email: true, id: true, image: true, fullName: true, status: true, lastLogin: true
+                        }
+                    },
                     userOneId: true,
                     userTwoId: true
                 }
@@ -164,8 +172,8 @@ class RoomService {
                     ]
                 },
                 include: {
-                    userOne: { select: { username: true, email: true, id: true, image: true, fullName: true, status: true } },
-                    userTwo: { select: { username: true, email: true, id: true, image: true, fullName: true, status: true } }
+                    userOne: { select: { username: true, email: true, id: true, image: true, fullName: true, status: true, lastLogin: true } },
+                    userTwo: { select: { username: true, email: true, id: true, image: true, fullName: true, status: true, lastLogin: true } }
                 }
             });
 

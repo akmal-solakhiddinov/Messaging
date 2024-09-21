@@ -1,5 +1,4 @@
 const tokenService = require('../services/token.service')
-
 function authorization(req, res, next) {
     try {
 
@@ -14,10 +13,12 @@ function authorization(req, res, next) {
             return next(new Error('Authorization header is missing '))
         }
 
-        const { user } = tokenService.verify(accessToken)
-        if (!user) {
-            return next(new Error('Authorization header is missing '))
+        const tokenResult = tokenService.verifyAccessToken(accessToken)
+        if (tokenResult === null) {
+            return res.status(400).json({ message: 'Authorization header is not valid' })
         }
+
+        const { user } = tokenResult;
 
         req.user = user;
         next()

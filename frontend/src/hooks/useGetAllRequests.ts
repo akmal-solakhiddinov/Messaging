@@ -7,7 +7,6 @@ const useGetAllRequests = () => {
         queryKey: ["friendRequests"],
         queryFn: async () => {
             const res = await $axios.get('requests/friend/get-all');
-            console.log(res);
             return res.data;
         }
     });

@@ -3,14 +3,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/authContext";
-import $axios from "@/http/axios";
+import useDontAllowRoute from "@/hooks/useDontAllowRoute";
+import useLogin from "@/hooks/useLogin";
+import useSEO from "@/hooks/useSEO";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LucideLock, LucideUser } from "lucide-react";
-import { useEffect, useState } from "react";
+import { LucideLock, LucideUser, LucideX } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, } from "react-router-dom";
 import { z } from "zod";
-
 
 const schemaLogin = z.object({
     email: z.string().min(3).email('Invalid email format'),
@@ -19,63 +19,56 @@ const schemaLogin = z.object({
 
 type LoginSchema = z.infer<typeof schemaLogin>;
 
-const saveToken = (token: string) => {
-    localStorage.setItem('token', token);
-};
-
 const Login = () => {
-    const navigate = useNavigate();
-    const { isAuth } = useAuth();
-    const { handleSubmit, register, formState: { isSubmitting } } = useForm<LoginSchema>({ resolver: zodResolver(schemaLogin) });
-    const [error, setError] = useState<string>('')
+    const { isAuth, user, isActivated } = useAuth();
+    useDontAllowRoute()
+    const { handleSubmit, register } = useForm<LoginSchema>({
+        resolver: zodResolver(schemaLogin),
+    });
+    const { login, error, isError, reset, isLogining, isSuccess } = useLogin();
+    useSEO('Login')
 
 
     const handleLogin = async (data: LoginSchema) => {
-        setError('');
-        try {
-            const res = await $axios.post('/auth/login', data);
-            if (res.data && res.data.token) {
-                saveToken(res.data.token);
-                // fetchUser();
-            } else {
-                setError(res.data.message || 'Unexpected response from the server.');
-            }
-        } catch (error: any) {
-            setError(error.response?.data?.message || 'An error occurred during login.');
-            console.error('Login Error:', error.response?.data?.message || error.message);
-        }
+        login(data);
     };
-
-    useEffect(() => {
-        if (isAuth) navigate('/');
-    }, [isAuth, navigate]);
 
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-slate-900">
             <Card className="w-full max-w-md shadow-lg border border-slate-700 rounded-xl bg-slate-800">
                 <CardHeader className="text-center">
-                    <CardTitle className="text-2xl text-white font-semibold">Welcome Back</CardTitle>
-                    <CardDescription className="text-slate-400">Please enter your
-                        credentials to log in</CardDescription>
-                    {error && (
+                    <CardTitle className="text-2xl text-white font-semibold">
+                        Welcome Back
+                    </CardTitle>
+                    <CardDescription className="text-slate-400">
+                        Please enter your credentials to log in
+                    </CardDescription>
+                    {isError && (
                         <div className="flex items-center justify-between gap-2 px-4 py-2 mt-4 bg-red-600 text-white rounded-md shadow-md">
-                            <span>{error}</span>
-                            <button
-                                onClick={() => setError('')}
-                                className="text-white hover:text-slate-200 transition-colors"
-                            >
-                                ✕
+                            <span>{error.response?.data.message}</span>
+                            <button onClick={reset} className="text-white hover:text-slate-200 transition-colors">
+                                <LucideX />
                             </button>
                         </div>
                     )}
 
+                    {isSuccess || (isAuth && !isActivated) && (
+                        <div className="flex items-center justify-between gap-2 px-4 py-2 mt-4 bg-red-600 text-white rounded-md shadow-md">
+                            <span>
+                                Check your email we have sent you <strong>{user?.email}</strong> an activation link, link <strong>expires</strong> in <strong>5 minutes</strong>
+                            </span>
+                            <button onClick={reset} className="text-white hover:text-slate-200 transition-colors">
+                                <LucideX />
+                            </button>
+                        </div>
+                    )}
                 </CardHeader>
                 <CardContent className="space-y-6 p-6">
                     <form onSubmit={handleSubmit(handleLogin)}>
                         <div className="space-y-4">
                             <div className="flex flex-col gap-2">
-                                <Label htmlFor="email" className="text-slate-400">Username</Label>
+                                <Label htmlFor="email" className="text-slate-400">Email</Label>
                                 <div className="relative">
                                     <Input
                                         id="email"
@@ -99,14 +92,17 @@ const Login = () => {
                                     />
                                     <LucideLock className="absolute left-3 top-3 text-slate-500" />
                                 </div>
+                                <Link to="/forgot-password" className="text-slate-300 hover:underline text-sm">
+                                    Forgot password
+                                </Link>
                             </div>
                         </div>
-                        <Button disabled={isSubmitting} variant={"secondary"} className="w-full mt-4">
+                        <Button disabled={isLogining} variant={"secondary"} className="w-full mt-4">
                             Sign In
                         </Button>
 
                         <div className="text-center mt-4 text-slate-300">
-                            Don’t have an account? {" "}
+                            Don’t have an account?{" "}
                             <Link to="/register" className="text-slate-100 hover:underline">
                                 Sign up
                             </Link>
@@ -116,6 +112,6 @@ const Login = () => {
             </Card>
         </div>
     );
-}
+};
 
-export default Login
+export default Login;

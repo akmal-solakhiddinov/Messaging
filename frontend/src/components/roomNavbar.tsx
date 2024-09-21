@@ -2,12 +2,13 @@ import { UserType } from "@/lib/type";
 import { Link, useNavigate } from "react-router-dom";
 import { Popover, PopoverContent } from "./ui/popover";
 import { PopoverTrigger } from "@radix-ui/react-popover";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, LucidePhoneCall } from "lucide-react";
 import { CiMenuKebab } from "react-icons/ci";
 import { Button } from "./ui/button";
 import useDelete from "@/hooks/useDelete";
-import { useEffect } from "react";
-// import { useSystem } from "@/context/systemContext";
+import { formatTime } from '@/lib/helper'
+import useSEO from "@/hooks/useSEO";
+import { useSystem } from "@/context/systemContext";
 
 interface RoomNavbarProps {
     friend: UserType | null;
@@ -17,7 +18,8 @@ interface RoomNavbarProps {
 
 const RoomNavbar: React.FC<RoomNavbarProps> = ({ friend, roomId }) => {
     const navigate = useNavigate()
-    // const { setSheet } = useSystem()
+    useSEO(`${friend?.fullName} | chat`)
+    const { setFriend } = useSystem()
 
     const handleDeleteRoom = async () => {
         deleteItem(`rooms/delete/${roomId}`)
@@ -25,10 +27,7 @@ const RoomNavbar: React.FC<RoomNavbarProps> = ({ friend, roomId }) => {
         window.location.reload()
     }
 
-
-    useEffect(() => {
-        document.title = friend?.fullName || 'unkown user';
-    }, [friend?.fullName]);
+    const friendId = friend?.id ? friend.id : ''
 
     const { deleteItem, isDeleting } = useDelete()
     return (
@@ -50,7 +49,7 @@ const RoomNavbar: React.FC<RoomNavbarProps> = ({ friend, roomId }) => {
 
                 <div className="flex-1">
                     <Link to={`/profile/${friend?.id}`} className="text-white font-medium">{friend?.fullName}</Link>
-                    <div className="text-slate-400 text-sm">{friend?.status}</div>
+                    <div className="text-slate-400 text-sm">{friend?.status === 'online' ? friend?.status : (friend?.lastLogin && formatTime(friend?.lastLogin))}</div>
                 </div>
                 {/* <div
                 className={`w-3 h-3 rounded-full ${friend.status === 'Online' ? 'bg-green-500' : friend.status === 'Busy' ? 'bg-yellow-500' : 'bg-gray-500'}`}
@@ -59,7 +58,9 @@ const RoomNavbar: React.FC<RoomNavbarProps> = ({ friend, roomId }) => {
             /> */}
             </div>
 
-
+            <Button variant={'ghost'} onClick={() => setFriend(friendId)}>
+                <LucidePhoneCall />
+            </Button>
 
             <Popover>
                 <PopoverTrigger><CiMenuKebab /></PopoverTrigger>

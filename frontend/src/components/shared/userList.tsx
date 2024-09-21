@@ -3,13 +3,14 @@ import useRoomFetch from "@/hooks/useRoomFetch";
 import { ScrollArea } from "../ui/scroll-area";
 import { NavLink } from "react-router-dom";
 import { useSystem } from "@/context/systemContext";
+import Spinner from "./Spinner";
 
 const UserList = () => {
-    const { rooms, loading } = useRoomFetch()
+    const { rooms, isLoading } = useRoomFetch()
     const { setSheet } = useSystem()
     return (
         <ScrollArea className="space-y-2 bg-slate-700 px-4 h-full scroll-p-10 ">
-            {loading && <div>Loading...</div>}
+            {isLoading && <Spinner />}
             {rooms?.map((room) => (
                 <NavLink
                     to={`room/${room?.id}`} key={room.id}

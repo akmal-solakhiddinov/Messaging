@@ -27,10 +27,10 @@ const useRealTimeMessages = (roomId: string | undefined) => {
     useEffect(() => {
         if (isConnected) {
             socket.emit('joinRoom', roomId)
-            socket.on('message', handleNewMessage); // Changed to 'message'
+            socket.on('message', handleNewMessage);
 
             return () => {
-                socket.off('message', handleNewMessage); // Changed to 'message'
+                socket.off('message', handleNewMessage);
             };
         }
     }, [handleNewMessage, isConnected, socket, roomId]);

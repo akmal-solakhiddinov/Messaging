@@ -11,6 +11,10 @@ import ProtectedRoute from "./components/shared/ProtectedRoute";
 import AuthProvider from "./context/authContext";
 import Register from "./pages/register";
 import Login from "./pages/login";
+import Activation from "./pages/activation";
+import ForgetPassword from "./pages/forgetPassword";
+import UpdatePassword from "./pages/updatePassword";
+import VideoCall from "./pages/videoCall";
 
 function App() {
   return (
@@ -27,9 +31,14 @@ function App() {
 
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
+            <Route path="activation" element={<Activation />} />
+            <Route path="forgot-password" element={<ForgetPassword />} />
+            <Route path="recovery-account/:token" element={<UpdatePassword />} />
+
 
             <Route path="*" element={<Notfound />} />
           </Routes>
+          <VideoCall />
           <Toaster />
         </SystemProvider>
       </BrowserRouter>

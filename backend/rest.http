@@ -1,0 +1,19 @@
+# POST http://localhost:4000/api/v-1/auth/register
+POST http://localhost:4000/api/v-1/auth/login
+Content-Type: application/json
+
+    # "fullName": "sa",
+{
+    "email": "saslssamss@gmawssissl.com",
+    "password": "password"
+}
+
+
+
+#######
+GET http://localhost:4000/api/v-1/auth/activation/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiMjIwNDVkZmUtMzc4ZC00MzNlLTg0NDQtYmM1YTI1ODliZGE3IiwiZW1haWwiOiJzYXNsc3NhbXNzQGdtYXdzc2lzc2wuY29tIiwiZnVsbE5hbWUiOiJzYSJ9LCJpYXQiOjE3MjY2NDgzNTcsImV4cCI6MTcyNjczNDc1N30.AKcvC3x7cMA9sGKSjyK4sNqFS8klG4yZg8D-ZsKJOdA
+
+###
+GET http://localhost:4000/api/v-1/user/profile
+Content-Type: application/json
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiMjIwNDVkZmUtMzc4ZC00MzNlLTg0NDQtYmM1YTI1ODliZGE3IiwiZW1haWwiOiJzYXNsc3NhbXNzQGdtYXdzc2lzc2wuY29tIiwiZnVsbE5hbWUiOiJzYSJ9LCJpYXQiOjE3MjY2NDgzNTcsImV4cCI6MTcyNjczNDc1N30.AKcvC3x7cMA9sGKSjyK4sNqFS8klG4yZg8D-ZsKJOdA

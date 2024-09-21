@@ -56,6 +56,8 @@ export type UserType = {
     account: 'public' | 'private';
     status: 'offline' | 'online';
     lastLogin: string;
+    isActivated: boolean;
+    chatRoomId?: string,
 }
 
 

@@ -8,17 +8,17 @@ interface Props {
 }
 
 const ProtectedRoute: React.FC<Props> = ({ children }) => {
-    const { isAuth, loading } = useAuth();
+    const { isAuth, loading, isActivated } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
         if (!loading && !isAuth) {
-            navigate('/login');
+            navigate('/login', { replace: true });
         }
     }, [isAuth, loading, navigate]);
 
-    if (loading) return (<div className=" bg-slate-800 w-full h-full absolute inset-0 flex items-center justify-center"> <Spinner /></div>);
-
+    if (loading) return <Spinner />;
+    if (isAuth && !isActivated) navigate('/activation')
     return isAuth ? <>{children}</> : null;
 };
 
