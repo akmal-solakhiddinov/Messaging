@@ -31,17 +31,9 @@ To get the project running locally, follow these steps:
 
 1.  Clone the repository:
     
-    bash
-    
-    Copy code
-    
     `git clone https://github.com/akmal-solakhiddinov/Messaging.git` 
     
 2.  Navigate into the project directory:
-    
-    bash
-    
-    Copy code
     
     `cd Messaging` 
     
