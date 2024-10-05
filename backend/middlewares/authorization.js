@@ -1,29 +1,37 @@
 const tokenService = require('../services/token.service')
+
 function authorization(req, res, next) {
     try {
+        const authorization = req.headers.authorization;
 
+        console.log(req.cookies.refreshToken)
 
-        const authorization = req.headers.authorization
-        if (!authorization) {
-            return next(new Error('Authorization header is missing '))
+        if (!authorization || typeof authorization !== 'string') {
+            return res.status(400).json({ message: 'Authorization header is missing or invalid' });
         }
 
-        const accessToken = authorization.split(' ')[1]
-        if (!accessToken) {
-            return next(new Error('Authorization header is missing '))
+        const parts = authorization.split(' ');
+        if (parts.length !== 2 || parts[0] !== 'Bearer') {
+            return res.status(400).json({ message: 'Authorization format is invalid' });
         }
 
-        const tokenResult = tokenService.verifyAccessToken(accessToken)
-        if (tokenResult === null) {
-            return res.status(400).json({ message: 'Authorization header is not valid' })
+        const accessToken = parts[1];
+        if (accessToken == null) {
+            return res.status(400).json({ message: 'Authorization token is missing' });
+        }
+
+        const tokenResult = tokenService.verifyAccessToken(accessToken);
+        if (!tokenResult) {
+            return res.status(401).json({ message: 'Authorization token is not valid' });
         }
 
         const { user } = tokenResult;
-
         req.user = user;
-        next()
+
+        next();
     } catch (error) {
-        return next()
+        console.error(error);
+        return res.status(500).json({ message: 'An internal error occurred' });
     }
 }
 

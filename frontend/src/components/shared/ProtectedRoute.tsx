@@ -10,6 +10,9 @@ interface Props {
 const ProtectedRoute: React.FC<Props> = ({ children }) => {
     const { isAuth, loading, isActivated } = useAuth();
     const navigate = useNavigate();
+    // const accessToken = localStorage.getItem('accessToken')
+
+    // if (!accessToken) navigate('/login')
 
     useEffect(() => {
         if (!loading && !isAuth) {

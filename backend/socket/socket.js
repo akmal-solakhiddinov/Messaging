@@ -28,19 +28,35 @@ function initIO(server) {
             });
 
             socket.on('offer', (data) => {
-                const { offer, roomId } = data;
-                socket.broadcast.to(roomId).emit('offer', { offer, roomId });
+                const { offer, roomId, myId } = data;
+                socket.broadcast.to(roomId).emit('offer', { offer, roomId, myId });
             });
 
             socket.on('answer', (data) => {
-                const { answer, roomId } = data;
-                socket.broadcast.to(roomId).emit('answer', { answer, roomId });
+                const { answer, roomId, myId } = data;
+                socket.broadcast.to(myId).emit('answer', { answer, roomId, myId });
             });
 
             socket.on('candidate', (data) => {
-                const { candidate, roomId } = data;
-                socket.broadcast.to(roomId).emit('candidate', { candidate, roomId });
+                const { candidate, roomId, myId } = data;
+                console.log(candidate, roomId, myId, 'ice candidates');
+
+                // Ensure we're not sending the candidate to the sender (myself)
+                if (userId !== myId) {
+                    socket.to(myId).emit('candidate', { candidate, roomId, myId });
+                } else {
+                    socket.to(roomId).emit('candidate', { candidate, roomId, myId });
+                }
             });
+
+
+            socket.on('endCall', ({ roomId }) => {
+                console.log('End call!!!!');
+                console.log('Room ID:', roomId);
+
+                io.to(roomId).emit('endCall');
+            });
+
 
             socket.on('disconnect', async () => {
                 console.log('User disconnected:', socket.id);

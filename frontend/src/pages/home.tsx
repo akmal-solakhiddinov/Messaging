@@ -7,16 +7,17 @@ const Home = () => {
     const { pathname } = useLocation()
     useSEO(`${pathname === '/' && 'Home'}`)
     return (
-        <div className="bg-slate-900 min-h-screen lg:p-6 flex">
-            <div className="bg-slate-800 lg:h-[92vh] h-screen rounded-2xl overflow-hidden shadow-lg grid md:grid-cols-[20rem_1fr] w-full">
-                <Sidebar />
+        <div className="bg-slate-900 min-h-screen md:grid grid-cols-1 md:grid-cols-[auto_1fr] overflow-hidden">
 
-                <main className="bg-slate-800 flex flex-col h-screen">
-                    <Outlet />
-                </main>
-            </div>
+            {/* Sidebar */}
+            <Sidebar />
+
+            {/* Main Content */}
+            <main className="bg-slate-800 flex flex-col md:h-screen h-full  overflow-hidden">
+                <Outlet />
+            </main>
+
         </div>
-
     );
 };
 

@@ -12,34 +12,38 @@ const Sidebar = () => {
     const handleOpenChange = (isOpen: boolean) => {
         setSheet(isOpen);
     };
+
     return (
-        <>
-            {params?.pathname === '/' ? (
-                <aside className="md:hidden bg-slate-700 border-r  border-slate-600 h-screen  relative ">
-                    <div className=" w-full bg-slate-500 py-3  flex flex-row items-center sticky top-0 z-50">
+        <div className="bg-slate-800 w-full md:w-80 md:h-screen rounded-2xl overflow-hidden shadow-lg">
+            {/* Mobile Sidebar (shown only when pathname is `/`) */}
+            {params?.pathname === '/' && (
+                <aside className="md:hidden w-full bg-slate-700 border-r h-screen border-slate-600 overflow-hidden">
+                    <div className="w-full bg-slate-500 py-3 flex flex-row items-center sticky top-0 z-50">
                         <TabBar />
                         <SearchBar />
                     </div>
                     <UserList />
                 </aside>
-            ) : null}
+            )}
 
-            <aside className="  hidden md:block bg-slate-700 border-r  border-slate-600 h-screen  relative ">
-                <div className="sticky top-0 z-50 h-14 w-full bg-slate-500 py-3  flex flex-row items-center">
+            {/* Desktop Sidebar */}
+            <aside className="hidden md:block bg-slate-700 border-r h-screen border-slate-600">
+                <div className="sticky top-0 z-50 h-14 w-full bg-slate-500 py-3 flex flex-row items-center">
                     <TabBar />
                     <SearchBar />
                 </div>
                 <UserList />
             </aside>
 
+            {/* Mobile Sheet Sidebar */}
             <Sheet open={sheet} onOpenChange={handleOpenChange}>
                 <SheetContent side="left" className="p-0 md:hidden">
                     <SearchBar closeBtn={() => setSheet(false)} />
                     <UserList />
-                    {/* <TabBar /> */}
                 </SheetContent>
             </Sheet>
-        </>
+        </div>
+
     )
 }
 

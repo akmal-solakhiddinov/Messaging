@@ -17,6 +17,8 @@ import UpdatePassword from "./pages/updatePassword";
 import VideoCall from "./pages/videoCall";
 
 function App() {
+
+
   return (
     <AuthProvider>
       <BrowserRouter>
