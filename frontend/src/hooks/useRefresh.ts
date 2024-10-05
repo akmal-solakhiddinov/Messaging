@@ -7,10 +7,10 @@ const useRefreshToken = () => {
     const { toast } = useToast();
 
     const { mutate: refreshToken, isPending: isLogining, error, isError, reset, isSuccess } = useMutation({
-        mutationFn: async (data: object) => {
+        mutationFn: async () => {
             const accessToken = localStorage.getItem('accessToken');
             if (accessToken) {
-                const res = await $axios.get('/auth/refresh', data);
+                const res = await $axios.get('/auth/refresh');
                 localStorage.setItem('accessToken', res.data.accessToken);
                 return res.data;
             }
