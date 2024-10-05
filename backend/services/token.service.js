@@ -11,7 +11,7 @@ const JWT_PASSWORD_SECRET = process.env.JWT_PASSWORD_SECRET || "default-secret-k
 
 class TokenService {
     generate(payload) {
-        const accessToken = jwt.sign({ user: payload }, JWT_ACCESS_SECRET, { expiresIn: "1d" });
+        const accessToken = jwt.sign({ user: payload }, JWT_ACCESS_SECRET, { expiresIn: "15d" });
         const refreshToken = jwt.sign({ user: payload }, JWT_REFRESH_SECRET, { expiresIn: "30d" });
         const activationToken = jwt.sign({ user: payload }, JWT_ACTIVATION_SECRET, { expiresIn: "5m" });
 

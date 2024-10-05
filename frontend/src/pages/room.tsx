@@ -31,19 +31,19 @@ const Room = () => {
     }, [messages]);
 
     return (
-        <>
+        <div className="min-h-screen flex flex-col">
+
+            {/* Room Navbar (Sticky) */}
             <div className="sticky top-0 z-10">
                 <RoomNavbar friend={friend} roomId={id} />
             </div>
 
-
-            <ScrollArea className="  px-6 my-4 scroll-p-14 flex-1 overflow-y-auto">
-                {isLoading ?
-                    (
+            {/* Message Scroll Area */}
+            <div className="flex-grow">
+                <ScrollArea className="px-6 my-4 scroll-p-14  h-[80vh] overflow-y-auto   ">
+                    {isLoading ? (
                         <Spinner />
-                    )
-                    :
-                    (
+                    ) : (
                         messages?.map((message: MessageType, index: number) => (
                             <Message
                                 message={message}
@@ -53,13 +53,19 @@ const Room = () => {
                             />
                         ))
                     )}
-            </ScrollArea>
+                    {!messages?.length && (
+                        <div className="text-center text-white py-6">
+                            Room createred, No messages yet.
+                        </div>
+                    )}
+                </ScrollArea>
+            </div>
 
-
+            {/* Form Message (Sticky at the bottom) */}
             <div className="sticky bottom-0 bg-slate-700 p-3 px-6">
                 <FormMessage receiverId={friend?.id} roomId={id} />
             </div>
-        </>
+        </div>
     );
 };
 

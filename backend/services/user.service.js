@@ -1,14 +1,15 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const requestService = require('./request.service');
-
+const UserDto = require('../dtos/user.dto')
 class UserService {
     async profile(userId) {
         // console.log(userId, '<use rid');
         try {
             const user = await prisma.user.findUnique({ where: { id: userId } });
             if (!user) throw new Error('User not found');
-            return { user };
+            const userDto = new UserDto(user)
+            return { user: { ...userDto } };
         } catch (error) {
             throw new Error(`Error retrieving profile for user ID ${userId}: ${error.message}`);
         }

@@ -47,7 +47,9 @@ class AuthService {
     }
 
     async login(email, password) {
+
         try {
+            console.log('started');
             const user = await prisma.user.findUnique({ where: { email } });
 
             if (!user) {
@@ -66,6 +68,7 @@ class AuthService {
             });
 
             await tokenService.saveToken(user.id, tokens.refreshToken);
+            console.log('finished');
 
             return { user, accessToken: tokens.accessToken, refreshToken: tokens.refreshToken };
         } catch (error) {

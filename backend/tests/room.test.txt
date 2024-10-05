@@ -1,0 +1,54 @@
+const roomService = require('../services/room.service.js');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
+jest.mock('@prisma/client', () => ({
+    chatRoom: {
+        findFirst: jest.fn(),
+        create: jest.fn(),
+        findMany: jest.fn(),
+    },
+}));
+describe('Room Service', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+
+
+    it('it should create room if not already exist', async () => {
+        expect(true).toBe(true)
+
+    })
+
+    it('should find and return an existing chat room', async () => {
+        prisma.chatRoom.findFirst.mockResolvedValue({
+            id: 1,
+            userOneId: 1,
+            userTwoId: 2,
+        });
+
+        const room = await roomService.create(1, 2);
+
+        expect(room).toEqual({
+            room: { id: 1, userOneId: 1, userTwoId: 2 },
+        });
+    });
+
+    it('should create a new chat room if none exists', async () => {
+        prisma.chatRoom.findFirst.mockResolvedValue(null);
+
+        prisma.chatRoom.create.mockResolvedValue({
+            id: 2,
+            userOneId: 1,
+            userTwoId: 3,
+        });
+
+        const room = await roomService.create(1, 3);
+
+        expect(room).toEqual({
+            room: { id: 2, userOneId: 1, userTwoId: 3 },
+        });
+    });
+
+})

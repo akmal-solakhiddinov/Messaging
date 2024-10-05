@@ -5,8 +5,11 @@ const useFetchAuthUser = () => {
     const { data: Authuser, isLoading: isLoadingAuth, isError, error } = useQuery({
         queryKey: ["user"],
         queryFn: async () => {
+            // const accessToken = localStorage.getItem('accessToken');
+            // if (!accessToken) {
             const res = await $axios.get('user/profile');
             return res.data;
+            // }
         },
 
         staleTime: 5 * 60 * 1000,

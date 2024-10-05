@@ -42,7 +42,7 @@ const SearchBar: React.FC<Props> = ({ closeBtn }) => {
                             {isSearching ? (
                                 <p className="text-slate-400">Searching...</p>
                             ) : results?.length > 0 ? (
-                                <ScrollArea className="space-y-2 h-full scroll-p-10 ">
+                                <ScrollArea className="space-y-2 h-screen scroll-p-10 ">
                                     {results?.map((result: UserType) => (
                                         <NavLink
                                             to={`/profile/${result?.id}`} key={result.id}

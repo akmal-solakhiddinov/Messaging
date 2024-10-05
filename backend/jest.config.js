@@ -1,8 +1,8 @@
-/* module.exports = {
-    testEnvironment: 'node',
-    clearMocks: true,
-    resetMocks: true,
-    restoreMocks: true,
+module.exports = {
     moduleDirectories: ['node_modules'],
+    moduleNameMapper: {
+        '@prisma/client$': '<rootDir>/node_modules/@prisma/client'
+    }
 };
-`` */
+
+

@@ -3,7 +3,7 @@ const http = require('http')
 const cors = require('cors')
 const { initIO } = require('./socket/socket.js');
 const system = require('./middlewares/system.js');
-
+const cookieParser = require('cookie-parser');
 require('dotenv').config()
 const PORT = process.env.PORT || 4000;
 const app = express();
@@ -12,11 +12,15 @@ const app = express();
 const server = http.createServer(app);
 initIO(server)
 
-app.use(cors())
+app.use(cors({
+    credentials: true,
+    origin: process.env.CLIENT_URL
+}))
 app.use(express.json());
+app.use(cookieParser());
 
 // const mail = require('./services/main.service')
-// 
+//
 // mail.sendActivationMail('salohiddinovakmalofficial@gmail.com', 'salom text')
 
 app.get('/', (req, res, next) => {

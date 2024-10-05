@@ -11,8 +11,11 @@ const useRoomFetch = () => {
     const { data: rooms = [], error, isLoading } = useQuery<RoomProps[]>({
         queryKey: ["rooms"],
         queryFn: async () => {
-            const res = await $axios.get('/rooms/get-all')
-            return res.data
+            const accessToken = localStorage.getItem('accessToken')
+            if (accessToken) {
+                const res = await $axios.get('/rooms/get-all')
+                return res.data
+            }
         }
     })
 

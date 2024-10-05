@@ -1,4 +1,6 @@
-const { prisma } = require('./prisma');
+const { PrismaClient } = require('@prisma/client');
+
+const prisma = new PrismaClient();
 class RoomService {
     async create(user1, user2) {
         try {
@@ -186,6 +188,7 @@ class RoomService {
 }
 
 
-module.exports = new RoomService()
+
+module.exports = new RoomService();
 
 

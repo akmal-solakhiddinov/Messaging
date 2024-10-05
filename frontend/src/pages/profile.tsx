@@ -19,7 +19,7 @@ const Profile = () => {
     return isFetchingUser ? (
         <Spinner />
     ) : (
-        <div className="p-8 max-w-3xl mx-auto">
+        <div className="p-8 max-w-3xl mx-auto h-screen">
             <div className="flex flex-col items-center gap-6">
                 <div className="w-32 h-32 rounded-full overflow-hidden border border-gray-300 shadow-md">
                     {profile?.image ? (

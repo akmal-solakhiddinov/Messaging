@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/authContext";
 import { useSystem } from "@/context/systemContext";
 import useSocket from "@/hooks/useSocket";
 import { useRef, useState, useEffect, useCallback } from "react";
 
 const VideoCall = () => {
     const { friend, setFriend } = useSystem();
+    const { user } = useAuth()
     const { isConnected, socket } = useSocket()
 
     const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null)
@@ -14,79 +16,22 @@ const VideoCall = () => {
     const [isSharingScreen, setIsSharingScreen] = useState(false);
 
     const [startCall, setStartCall] = useState(false)
-    const [incomingCall, setIncomingCall] = useState<{ offer: RTCSessionDescriptionInit, roomId: string } | null>(null)
+    const [incomingCall, setIncomingCall] = useState<{ offer: RTCSessionDescriptionInit, roomId: string, myId: string } | null>(null)
 
     const myVideoRef = useRef<HTMLVideoElement | null>(null);
     const peerVideoRef = useRef<HTMLVideoElement | null>(null);
     const myStreamRef = useRef<MediaStream | null>(null);
 
-    // Start video streams (you would replace this with actual WebRTC logic)
-    /*     useEffect(() => {
-            const getMediaStream = async () => {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({
-                        video: true,
-                        audio: true,
-                    });
-    
-    
-                    // console.log(stream.getTracks(), '< stream my video')
-                    myStreamRef.current = stream; // Store the stream reference
-                    if (myVideoRef.current) {
-                        (myVideoRef.current as unknown as HTMLVideoElement).srcObject = stream;
-                    }
-                } catch (err) {
-                    console.error("Error accessing user media: ", err);
-                }
-    
-                // Simulating peer video stream
-                if (peerVideoRef.current) {
-                    const peerStream = await navigator.mediaDevices.getUserMedia({
-                        video: true,
-                        audio: false,
-                    });
-                    (peerVideoRef.current as unknown as HTMLVideoElement).srcObject = peerStream;
-                }
-            };
-    
-            if (friend)
-                getMediaStream();
-        }, [friend]); */
 
-
-
-    const createPeerConnection = useCallback(() => {
-        const configuration = {
-            iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-        };
-
-        const pc = new RTCPeerConnection(configuration)
-
-        console.log(pc)
-
-        pc.onicecandidate = (ev) => {
-            console.log(ev)
-            if (ev.candidate && socket) {
-                socket.emit('candidate', {
-                    candidate: ev.candidate,
-                    roomId: friend
-                })
-            }
+    const openMediaDevice = async (constraints: object) => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            return stream;
+        } catch (error) {
+            console.error("Error accessing media devices:", error);
+            throw error;
         }
-
-
-        pc.ontrack = event => {
-            if (peerVideoRef.current) {
-                (peerVideoRef.current as unknown as HTMLVideoElement).srcObject = event.streams[0]
-            }
-        }
-        setPeerConnection(pc)
-        return pc
-    }, [friend, socket])
-
-
-
-
+    }
     const handleEndCall = useCallback(async () => {
         // Send signal to peer to end the call
         if (socket && friend) {
@@ -95,7 +40,7 @@ const VideoCall = () => {
 
         // Stop all media streams
         if (myStreamRef.current) {
-            (myStreamRef.current as MediaStream).getTracks().forEach(track => track.stop());
+            myStreamRef.current.getTracks().forEach(track => track.stop());
             myStreamRef.current = null;
         }
 
@@ -112,23 +57,106 @@ const VideoCall = () => {
         }
 
         // End the call in the app UI
+        console.log('call ended');
+
         setFriend('');
         setIncomingCall(null);
+        setStartCall(false);
     }, [friend, peerConnection, setFriend, socket]);
 
 
 
-    const handleOffer = async (offer: RTCSessionDescriptionInit, roomId: string) => {
-        setIncomingCall({ offer, roomId });
+    const createPeerConnection = useCallback(() => {
+        const configuration = {
+            iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+        };
+
+        const pc = new RTCPeerConnection(configuration)
+
+        console.log("PeerConnection created:", pc);
+
+        pc.onicecandidate = (ev) => {
+            console.log("ICE Candidate:", ev.candidate);
+            if (ev.candidate && socket && user?.id) {
+                socket.emit("candidate", {
+                    candidate: ev.candidate,
+                    roomId: friend,
+                    myId: user?.id
+                });
+            }
+        }
+
+        pc.ontrack = event => {
+            console.log("Received track:", event.streams[0]);
+            if (peerVideoRef.current) {
+                peerVideoRef.current.srcObject = event.streams[0];
+            }
+        }
+
+        // Monitor connectionState
+        pc.onconnectionstatechange = () => {
+            console.log("Connection State:", pc.connectionState);
+            switch (pc.connectionState) {
+                case "connected":
+                    console.log("Peers connected successfully.");
+                    break;
+                case "disconnected":
+                case "failed":
+                    console.log("Connection failed or disconnected.");
+                    handleEndCall(); // End the call gracefully
+                    break;
+                case "closed":
+                    console.log("Connection closed.");
+                    break;
+                default:
+                    break;
+            }
+        };
+
+        // Monitor iceConnectionState
+        pc.oniceconnectionstatechange = () => {
+            console.log("ICE Connection State:", pc.iceConnectionState);
+            switch (pc.iceConnectionState) {
+                case "connected":
+                case "completed":
+                    console.log("ICE negotiation completed.");
+                    break;
+                case "disconnected":
+                case "failed":
+                    console.log("ICE connection failed or disconnected.");
+                    handleEndCall(); // End the call gracefully
+                    break;
+                case "closed":
+                    console.log("ICE connection closed.");
+                    break;
+                default:
+                    break;
+            }
+        };
+
+        // Monitor signalingState
+        pc.onsignalingstatechange = () => {
+            console.log("Signaling State:", pc.signalingState);
+            // Additional handling based on signaling state can be added here
+        };
+
+        setPeerConnection(pc)
+        return pc
+    }, [friend, socket])
+
+
+    const handleOffer = async (offer: RTCSessionDescriptionInit, roomId: string, myId: string) => {
+        setIncomingCall({ offer, roomId, myId });
     };
 
     const handleAnswerCall = async () => {
         if (!incomingCall) return;
-        const { offer, roomId } = incomingCall;
+        const { offer, roomId, myId } = incomingCall;
+        // console.log("Handling answer call:", offer, roomId, myId)
         setFriend(roomId);
         setStartCall(true);
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({
+            const stream = await openMediaDevice({
                 audio: true,
                 video: true,
             });
@@ -142,12 +170,15 @@ const VideoCall = () => {
             stream.getTracks().forEach((track) => {
                 pc.addTrack(track, stream);
             });
-
+            // console.log('Remote description started')
             await pc.setRemoteDescription(new RTCSessionDescription(offer));
             const answer = await pc.createAnswer();
+            // console.log("Created answer:", answer)
+
             await pc.setLocalDescription(answer);
-            socket.emit("answer", { answer, roomId });
+            socket.emit("answer", { answer, roomId, myId });
             setIncomingCall(null);
+            // console.log("Connection State after answer:", pc.connectionState)
 
         } catch (error) {
             console.error("Error handling offer:", error);
@@ -202,15 +233,14 @@ const VideoCall = () => {
 
     useEffect(() => {
         if (socket && isConnected) {
-            const handleOfferMessage = async (message: { offer: RTCSessionDescriptionInit, roomId: string }) => {
-                const { offer, roomId } = message;
-                // console.log(offer, '<---offer')
-                await handleOffer(offer, roomId);
+            const handleOfferMessage = async (message: { offer: RTCSessionDescriptionInit, roomId: string, myId: string }) => {
+                const { offer, roomId, myId } = message;
+                await handleOffer(offer, roomId, myId);
             };
 
-            const handleAnswerMessage = async (message: { answer: RTCSessionDescriptionInit }) => {
-                const { answer } = message;
-                // console.log(answer, '<---answer')
+            const handleAnswerMessage = async (message: { answer: RTCSessionDescriptionInit, roomId: string, myId: string }) => {
+                const { answer, roomId, myId } = message;
+                console.log("Received answer:", answer, roomId, myId)
 
                 if (peerConnection) {
                     await peerConnection.setRemoteDescription(
@@ -219,20 +249,25 @@ const VideoCall = () => {
                 }
             };
 
-            const handleCandidateMessage = async (message: { candidate: object }) => {
-                const { candidate } = message;
-                // console.log(candidate, '<---candidate')
+            const handleCandidateMessage = async (message: { candidate: object, roomId: string, myId: string }) => {
+                const { candidate, myId, roomId } = message;
+                console.log("Received ICE Candidate:", candidate, 'my id:', myId, 'room id:', roomId)
 
                 if (peerConnection) {
-                    await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+                    try {
+
+                        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+                        console.log("Added ICE Candidate:", candidate);
+                    } catch (error) {
+                        console.error("Error adding received ICE candidate", error);
+                    }
                 }
             };
 
             const handleEndCallMessage = () => {
+                console.log("End call message received");
                 handleEndCall();
             };
-
-
 
             socket.on("offer", handleOfferMessage);
             socket.on("answer", handleAnswerMessage);
@@ -246,15 +281,15 @@ const VideoCall = () => {
                 socket.off("endCall", handleEndCallMessage);
             };
         }
-    }, [socket, peerConnection, isConnected, handleEndCall]);
+    }, [socket, peerConnection, isConnected, handleEndCall, user?.id]);
 
     useEffect(() => {
         const handleCall = async () => {
             setStartCall(true);
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: true,
+                const stream = await openMediaDevice({
                     audio: true,
+                    video: true,
                 });
 
                 myStreamRef.current = stream; // Store the stream reference
@@ -270,23 +305,34 @@ const VideoCall = () => {
                 const offer = await pc.createOffer();
                 await pc.setLocalDescription(offer);
 
-                socket.emit('offer', {
-                    offer,
-                    roomId: friend,
-                });
+                if (user?.id)
+                    socket.emit('offer', {
+                        offer,
+                        roomId: friend,
+                        myId: user?.id
+                    });
 
+                console.log("Offer sent:", offer);
             } catch (error) {
                 console.error("Error in handleCall:", error);
             }
         };
 
         if (friend) {
-            console.log('calling !!!!!')
-            handleCall()
+            console.log("Initiating call...");
+            handleCall();
         }
-    }, [createPeerConnection, friend, socket]
+    }, [createPeerConnection, friend, socket, user?.id]
     )
 
+    /*     // Cleanup on component unmount
+        useEffect(() => {
+            return () => {
+                handleEndCall();
+            };
+        }, [handleEndCall.]);
+    
+     */
     if (incomingCall) return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white p-4 rounded shadow">
@@ -309,7 +355,7 @@ const VideoCall = () => {
 
 
     return (
-        friend && startCall && (
+        startCall && (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 transition-opacity duration-500">
                 <div className="relative w-[90%] sm:w-[70%] md:w-[50%] lg:w-[40%] xl:w-[30%] bg-white bg-opacity-10 backdrop-blur-lg rounded-3xl shadow-2xl p-6 transition-all duration-500 ease-in-out">
                     {/* Video Call Header */}
@@ -386,3 +432,37 @@ const VideoCall = () => {
 };
 
 export default VideoCall;
+
+
+// Start video streams (you would replace this with actual WebRTC logic)
+/*     useEffect(() => {
+        const getMediaStream = async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: true,
+                });
+ 
+ 
+                // console.log(stream.getTracks(), '< stream my video')
+                myStreamRef.current = stream; // Store the stream reference
+                if (myVideoRef.current) {
+                    (myVideoRef.current as unknown as HTMLVideoElement).srcObject = stream;
+                }
+            } catch (err) {
+                console.error("Error accessing user media: ", err);
+            }
+ 
+            // Simulating peer video stream
+            if (peerVideoRef.current) {
+                const peerStream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: false,
+                });
+                (peerVideoRef.current as unknown as HTMLVideoElement).srcObject = peerStream;
+            }
+        };
+ 
+        if (friend)
+            getMediaStream();
+    }, [friend]); */

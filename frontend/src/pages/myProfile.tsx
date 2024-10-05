@@ -20,7 +20,7 @@ const MyProfile = () => {
     const handleLogout = () => logout();
 
     return (
-        <div className="p-8 max-w-4xl mx-auto">
+        <div className="p-8 max-w-4xl mx-auto min-h-screen">
             <div className="flex flex-col gap-6 items-center">
                 <div className="w-32 h-32 rounded-full overflow-hidden border border-gray-300 shadow-md">
                     {user?.image ? (
