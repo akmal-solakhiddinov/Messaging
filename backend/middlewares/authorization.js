@@ -4,8 +4,6 @@ function authorization(req, res, next) {
     try {
         const authorization = req.headers.authorization;
 
-        console.log(req.cookies.refreshToken)
-
         if (!authorization || typeof authorization !== 'string') {
             return res.status(400).json({ message: 'Authorization header is missing or invalid' });
         }

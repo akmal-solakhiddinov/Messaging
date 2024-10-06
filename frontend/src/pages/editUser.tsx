@@ -1,3 +1,4 @@
+import BackButton from "@/components/ui/backButton";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/authContext";
 import useEditUser from "@/hooks/useEditUser";
@@ -56,6 +57,7 @@ const EditUser = () => {
 
     return (
         <div className="p-8 min-h-screen">
+            <BackButton />
             <div className="max-w-lg mx-auto p-5 bg-white rounded-xl  shadow-lg ">
                 <h2 className="text-2xl font-semibold text-center mb-4 text-gray-800">Edit Profile</h2>
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">

@@ -1,4 +1,5 @@
 import Spinner from "@/components/shared/Spinner";
+import BackButton from "@/components/ui/backButton";
 import { Button, buttonVariants } from "@/components/ui/button";
 import useCreateRequest from "@/hooks/useCreateRequest";
 import useCreateRoom from "@/hooks/useCreateRoom";
@@ -20,6 +21,7 @@ const Profile = () => {
         <Spinner />
     ) : (
         <div className="p-8 max-w-3xl mx-auto h-screen">
+            <BackButton />
             <div className="flex flex-col items-center gap-6">
                 <div className="w-32 h-32 rounded-full overflow-hidden border border-gray-300 shadow-md">
                     {profile?.image ? (

@@ -7,13 +7,6 @@ class UserController {
             const userId = req.user.id;
             const { user } = await userService.profile(userId);
 
-
-            res.cookie("refreshToken", 'refresh token', {
-                httpOnly: true,
-                
-                maxAge: 30 * 24 * 60 * 60 * 1000,
-            });
-
             return res.status(201).json(user)
         } catch (error) {
             return res.status(400).json({ message: error.message })

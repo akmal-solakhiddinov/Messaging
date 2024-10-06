@@ -106,6 +106,8 @@ model Token {
   userId String @unique
   token  String @db.Text
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // @@unique([token(length: 100)], name: "token_partial_idx")
 }
 
 enum FileType {

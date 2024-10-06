@@ -1,3 +1,4 @@
+import BackButton from "@/components/ui/backButton";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useAuth } from "@/context/authContext";
 import useGetAllRequests from "@/hooks/useGetAllRequests";
@@ -21,6 +22,8 @@ const MyProfile = () => {
 
     return (
         <div className="p-8 max-w-4xl mx-auto min-h-screen">
+            <BackButton />
+            
             <div className="flex flex-col gap-6 items-center">
                 <div className="w-32 h-32 rounded-full overflow-hidden border border-gray-300 shadow-md">
                     {user?.image ? (

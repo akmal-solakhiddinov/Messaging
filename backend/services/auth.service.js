@@ -159,7 +159,6 @@ class AuthService {
             const user = await prisma.user.findUnique({ where: { email } })
             const tokens = tokenService.generate({ id: user.id, email: user.email, fullName: user.fullName })
             await mailService.sendActivationMail(email, `${process.env.API_URL}/api/v-1/auth/activation/${tokens.activationToken}`);
-            // console.log(tokens.activationToken);
             return { success: true }
         } catch (error) {
             throw error
@@ -167,23 +166,29 @@ class AuthService {
     }
 
     async refresh(refreshToken) {
-        if (!refreshToken) {
-            throw new Error('Bad authorization')
+        try {
+            if (!refreshToken) {
+                throw new Error('Bad authorization')
+            }
+
+            const userPayload = tokenService.verifyRefreshToken(refreshToken)
+            if (!userPayload) throw new Error('Bad authorization')
+            const tokenDb = await tokenService.findToken(userPayload.user.id)
+            if (!userPayload || !tokenDb) {
+                throw new Error('Bad authorization')
+            }
+
+            const user = await prisma.user.findUnique({ where: { id: userPayload.user.id } })
+
+            const tokens = tokenService.generate({ id: user.id, email: user.email, fullName: user.fullName })
+
+            await tokenService.saveToken(user.id, tokens.refreshToken)
+
+            return { user: user, ...tokens }
+
+        } catch (error) {
+            throw error
         }
-
-        const userPayload = tokenService.verifyRefreshToken(refreshToken)
-        const tokenDb = await tokenService.findToken(refreshToken)
-        if (!userPayload || !tokenDb) {
-            throw new Error('Bad authorization')
-        }
-
-        const user = await prisma.user.findUnique({ where: { id: userPayload.id } })
-
-        const tokens = tokenService.generateToken({ id: user.id, email: user.email, fullName: user.fullName })
-
-        await tokenService.saveToken(user.id, tokens.refreshToken)
-
-        return { user: user, ...tokens }
     }
 }
 

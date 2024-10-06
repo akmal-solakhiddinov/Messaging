@@ -6,13 +6,13 @@ class AuthController {
       const { fullName, email, password } = req.body;
 
       const data = await authService.register(fullName, email, password);
-      console.log(data, '<---auth controller data');
 
       res.cookie("refreshToken", data.refreshToken, {
         httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'None',
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
-
 
       return res.status(201).json(data);
     } catch (error) {
@@ -23,19 +23,17 @@ class AuthController {
 
 
   async login(req, res, next) {
-
     try {
-      console.log('started');
 
       const { email, password } = req.body;
       const data = await authService.login(email, password);
 
-
       res.cookie("refreshToken", data.refreshToken, {
         httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'None',
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
-
 
       return res.status(201).json(data);
     } catch (error) {
@@ -99,14 +97,17 @@ class AuthController {
   async refresh(req, res, next) {
     try {
       const { refreshToken } = req.cookies;
-
       if (!refreshToken) throw new Error('refresh token is missing')
 
       const data = await authService.refresh(refreshToken);
+
       res.cookie("refreshToken", data.refreshToken, {
         httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'None',
         maxAge: 30 * 24 * 60 * 60 * 1000,
       });
+
       return res.json(data);
     } catch (error) {
       return res.status(500).json({ message: error.message });
